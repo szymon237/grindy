@@ -2,26 +2,27 @@
   "name": "Grindy — Deine Kaffee-Sammlung",
   "short_name": "Grindy",
   "description": "Specialty Coffee sammeln, bewerten und den perfekten Mahlgrad finden.",
-  "start_url": "/",
+  "start_url": "/grindy/",
+  "scope": "/grindy/",
   "display": "standalone",
   "background_color": "#2C1810",
   "theme_color": "#2C1810",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/grindy/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/grindy/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/grindy/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

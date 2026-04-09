@@ -1,13 +1,14 @@
-const CACHE_NAME = 'grindy-v1';
+const CACHE_NAME = 'grindy-v2';
+const BASE = '/grindy/';
 
 // Assets to cache on install
 const PRECACHE_URLS = [
-  '/',
-  '/manifest.json',
-  '/favicon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/apple-touch-icon.png',
+  BASE,
+  BASE + 'manifest.json',
+  BASE + 'favicon.svg',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png',
+  BASE + 'apple-touch-icon.png',
 ];
 
 // Install: precache shell assets
@@ -54,7 +55,6 @@ self.addEventListener('fetch', event => {
     caches.match(request).then(cached => {
       if (cached) return cached;
       return fetch(request).then(response => {
-        // Cache successful responses for static assets
         if (response.ok && (
           request.url.includes('/assets/') ||
           request.url.includes('fonts.googleapis') ||

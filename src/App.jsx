@@ -1680,6 +1680,89 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
 // App Root
 // ──────────────────────────────────────────────
 
+// ──────────────────────────────────────────────
+// Password Gate
+// ──────────────────────────────────────────────
+
+const PW_HASH = '4271fa8e069bb155d6e82d6a8e9e4a577c2c5b7d0990d985ef1af9aa6db3313c';
+const AUTH_KEY = 'grindy-auth';
+
+async function hashPassword(pw) {
+  const data = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function PasswordGate({ children }) {
+  const [authed, setAuthed] = useState(() => sessionStorage.getItem(AUTH_KEY) === 'true');
+  const [input, setInput] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (authed) return children;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(false);
+    const hash = await hashPassword(input);
+    if (hash === PW_HASH) {
+      sessionStorage.setItem(AUTH_KEY, 'true');
+      setAuthed(true);
+    } else {
+      setError(true);
+      setInput('');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-svh flex items-center justify-center px-6" style={{ background: 'var(--color-espresso)' }}>
+      <form onSubmit={handleSubmit} className="w-full max-w-[300px] text-center">
+        <div className="w-16 h-16 rounded-full bg-[var(--color-roast)] flex items-center justify-center mx-auto mb-6">
+          <Coffee size={28} className="text-[var(--color-gold)]" />
+        </div>
+        <h1 className="text-2xl text-[var(--color-cream)] mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+          Grindy
+        </h1>
+        <p className="text-sm text-[var(--color-text-muted)] mb-8">
+          Passwort eingeben
+        </p>
+        <input
+          type="password"
+          value={input}
+          onChange={e => { setInput(e.target.value); setError(false); }}
+          placeholder="Passwort"
+          autoFocus
+          className={`w-full px-4 py-3 rounded-xl text-sm text-center bg-[var(--color-espresso-light)]
+            text-[var(--color-cream)] placeholder:text-[var(--color-text-muted)]
+            focus:outline-none focus:ring-2 transition-colors
+            ${error ? 'ring-2 ring-[var(--color-error)]' : 'focus:ring-[var(--color-caramel)]'}`}
+          style={{ minHeight: 48 }}
+        />
+        {error && (
+          <p className="text-xs text-[var(--color-error)] mt-2">Falsches Passwort</p>
+        )}
+        <button
+          type="submit"
+          disabled={!input || loading}
+          className="w-full mt-4 py-3 rounded-xl font-semibold text-sm transition-colors
+            bg-[var(--color-caramel)] text-white hover:bg-[var(--color-roast-light)]
+            disabled:opacity-40 disabled:cursor-not-allowed
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)]"
+          style={{ minHeight: 48 }}
+        >
+          {loading ? 'Prüfe...' : 'Öffnen'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
+// App Root
+// ──────────────────────────────────────────────
+
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { showToast, hideToast } = useToast(dispatch);
@@ -1707,28 +1790,30 @@ export default function App() {
   };
 
   return (
-    <div className="pb-20">
-      {/* First use hint — non-blocking */}
-      {state.firstUse && state.collection.length === 0 && (
-        <FirstUseHint onDismiss={() => dispatch({ type: 'DISMISS_FIRST_USE' })} />
-      )}
+    <PasswordGate>
+      <div className="pb-20">
+        {/* First use hint — non-blocking */}
+        {state.firstUse && state.collection.length === 0 && (
+          <FirstUseHint onDismiss={() => dispatch({ type: 'DISMISS_FIRST_USE' })} />
+        )}
 
-      {/* Main content */}
-      {renderView()}
+        {/* Main content */}
+        {renderView()}
 
-      {/* Toast */}
-      <Toast
-        toast={state.toast}
-        onDismiss={hideToast}
-        onUndo={() => state.toast?.undoAction?.()}
-      />
+        {/* Toast */}
+        <Toast
+          toast={state.toast}
+          onDismiss={hideToast}
+          onUndo={() => state.toast?.undoAction?.()}
+        />
 
-      {/* Bottom Navigation — 3 tabs, no hamburger menu */}
-      <BottomNav
-        activeTab={state.activeTab}
-        onNavigate={tab => dispatch({ type: 'NAVIGATE_TAB', tab })}
-        collectionCount={state.collection.length}
-      />
-    </div>
+        {/* Bottom Navigation — 3 tabs, no hamburger menu */}
+        <BottomNav
+          activeTab={state.activeTab}
+          onNavigate={tab => dispatch({ type: 'NAVIGATE_TAB', tab })}
+          collectionCount={state.collection.length}
+        />
+      </div>
+    </PasswordGate>
   );
 }

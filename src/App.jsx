@@ -21,12 +21,34 @@ import {
 // ──────────────────────────────────────────────
 
 const STORAGE_KEY = 'grindy-data';
+const RECIPE_VERSION = 2; // Bump to force recipe recalculation
+
+function migrateRecipes(persisted) {
+  if (!persisted || persisted.recipeVersion >= RECIPE_VERSION) return persisted;
+  if (!persisted.collection?.length) return persisted ? { ...persisted, recipeVersion: RECIPE_VERSION } : persisted;
+
+  const migrated = persisted.collection.map(item => {
+    const bean = item.bean || COFFEE_DATABASE.find(b => b.id === item.beanId);
+    if (!bean) return item;
+    const defaults = getRecipeDefaults(bean);
+    const newRecipes = {};
+    DRINK_TYPES.forEach(dt => {
+      const d = defaults[dt.id];
+      newRecipes[dt.id] = d
+        ? { grind: d.grind, dose: d.dose, yield: d.yield, time: d.time }
+        : { grind: null, dose: null, yield: null, time: null };
+    });
+    return { ...item, recipes: newRecipes };
+  });
+
+  return { ...persisted, collection: migrated, recipeVersion: RECIPE_VERSION };
+}
 
 function loadPersistedState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw);
+    return migrateRecipes(JSON.parse(raw));
   } catch {
     return null;
   }
@@ -37,6 +59,7 @@ function persistState(state) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       collection: state.collection,
       firstUse: state.firstUse,
+      recipeVersion: RECIPE_VERSION,
     }));
   } catch {
     // Storage full or unavailable — app still works, just no persistence

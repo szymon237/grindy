@@ -20,28 +20,28 @@ export const GRINDER = {
 };
 
 // Drink types — Rocket Appartamento + Niche Zero
-// Single: 9g bottomless | Double: 18g spouted | Café Crème: 16g
+// Single: 11g bottomless | Double: 18g spouted | Café Crème: 16g
 export const DRINK_TYPES = [
   {
     id: 'single',
     label: 'Single Shot',
     emoji: '☕',
-    defaults: { grind: 14, dose: 9, yield: 18, time: 26 },
-    grindRange: [8, 22],
+    defaults: { grind: 12, dose: 11, yield: 24, time: 24 },
+    grindRange: [6, 20],
   },
   {
     id: 'double',
     label: 'Double Shot',
     emoji: '☕☕',
-    defaults: { grind: 15, dose: 18, yield: 36, time: 28 },
-    grindRange: [8, 25],
+    defaults: { grind: 13, dose: 18, yield: 40, time: 24 },
+    grindRange: [7, 22],
   },
   {
     id: 'cafe-creme',
     label: 'Café Crème',
     emoji: '🫗',
-    defaults: { grind: 25, dose: 16, yield: 120, time: 27 },
-    grindRange: [20, 35],
+    defaults: { grind: 23, dose: 16, yield: 120, time: 26 },
+    grindRange: [18, 32],
   },
 ];
 
@@ -224,15 +224,15 @@ export const COFFEE_DATABASE = [
 // ── Smart Recipe Defaults ──────────────────────
 // Berechnet Startrezepte basierend auf Röstgrad & Processing
 // Optimiert für: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
-// Single Basket: 9g bodenlos | Double Basket: 18g
+// Single Basket: 11g bodenlos | Double Basket: 18g
 
 const ROAST_RECIPE_MAP = {
   // [grindSingle, grindDouble, grindCreme, doseSingle, doseDouble, doseCreme, yieldSingle, yieldDouble, yieldCreme, timeSingle, timeDouble, timeCreme]
-  'light':        [19, 20, 28, 9, 18, 16, 22, 45, 130, 28, 30, 30],
-  'light-medium': [16, 17, 27, 9, 18, 16, 20, 40, 125, 27, 29, 28],
-  'medium':       [14, 15, 25, 9, 18, 16, 18, 36, 120, 26, 28, 27],
-  'medium-dark':  [12, 13, 24, 9, 18, 16, 16, 32, 120, 25, 27, 27],
-  'dark':         [10, 11, 22, 8, 17, 16, 14, 29, 120, 24, 26, 27],
+  'light':        [17, 18, 26, 11, 18, 16, 29, 48, 130, 26, 26, 28],
+  'light-medium': [14, 15, 25, 11, 18, 16, 27, 44, 125, 25, 25, 27],
+  'medium':       [12, 13, 23, 11, 18, 16, 24, 40, 120, 24, 24, 26],
+  'medium-dark':  [10, 11, 22, 11, 18, 16, 22, 36, 120, 23, 23, 25],
+  'dark':         [ 8,  9, 20, 10, 17, 16, 20, 34, 120, 22, 22, 25],
 };
 
 // Natural/Anaerobic: etwas gröber (+1), mehr Solubles

@@ -49,13 +49,15 @@ body {
 #root {
   max-width: 430px;
   margin: 0 auto;
-  min-height: 100svh;
+  height: 100svh;
   background: var(--color-milk);
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   box-shadow: 0 0 40px rgba(44, 24, 16, 0.08);
   /* iOS safe areas for notch/dynamic island */
   padding-top: env(safe-area-inset-top, 0px);
+  display: flex;
+  flex-direction: column;
 }
 
 /* Scrollbar styling */

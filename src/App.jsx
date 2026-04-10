@@ -1626,8 +1626,7 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-40
-        bg-white/95 backdrop-blur-md border-t border-[var(--color-cream-dark)]
+      className="shrink-0 bg-white/95 backdrop-blur-md border-t border-[var(--color-cream-dark)]
         safe-area-bottom"
       role="tablist"
       aria-label="Hauptnavigation"
@@ -1790,29 +1789,29 @@ export default function App() {
 
   return (
     <PasswordGate>
-      <div className="pb-20">
+      {/* Main content — scrollable */}
+      <main className="flex-1 overflow-y-auto overscroll-none">
         {/* First use hint — non-blocking */}
         {state.firstUse && state.collection.length === 0 && (
           <FirstUseHint onDismiss={() => dispatch({ type: 'DISMISS_FIRST_USE' })} />
         )}
 
-        {/* Main content */}
         {renderView()}
+      </main>
 
-        {/* Toast */}
-        <Toast
-          toast={state.toast}
-          onDismiss={hideToast}
-          onUndo={() => state.toast?.undoAction?.()}
-        />
+      {/* Bottom Navigation — always at bottom via flex layout */}
+      <BottomNav
+        activeTab={state.activeTab}
+        onNavigate={tab => dispatch({ type: 'NAVIGATE_TAB', tab })}
+        collectionCount={state.collection.length}
+      />
 
-        {/* Bottom Navigation — 3 tabs, no hamburger menu */}
-        <BottomNav
-          activeTab={state.activeTab}
-          onNavigate={tab => dispatch({ type: 'NAVIGATE_TAB', tab })}
-          collectionCount={state.collection.length}
-        />
-      </div>
+      {/* Toast — overlay */}
+      <Toast
+        toast={state.toast}
+        onDismiss={hideToast}
+        onUndo={() => state.toast?.undoAction?.()}
+      />
     </PasswordGate>
   );
 }

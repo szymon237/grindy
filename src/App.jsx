@@ -6,6 +6,7 @@ import {
   Undo2, AlertCircle, Sparkles, ChevronDown, ChevronUp,
   Timer, Weight, GlassWater, CircleDot,
 } from 'lucide-react';
+import { TapeCoffee, TapeSearch, TapePlus, CupShowcase, TapeCup1, TapeCup2, TapeCup3, TapeCup4, TapeCup5 } from './TapeIcons';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer,
 } from 'recharts';
@@ -394,7 +395,7 @@ function EmptyCollection({ onDiscover, onAdd }) {
   return (
     <div className="flex flex-col items-center justify-center px-8 py-16 text-center">
       <div className="w-20 h-20 rounded-full bg-[var(--color-cream)] flex items-center justify-center mb-6">
-        <Coffee size={36} className="text-[var(--color-caramel)]" />
+        <TapeCup2 size={36} className="text-[var(--color-caramel)]" />
       </div>
       <h2 className="font-[var(--font-display)] text-2xl text-[var(--color-text-primary)] mb-2"
         style={{ fontFamily: 'var(--font-display)' }}>
@@ -447,8 +448,8 @@ function BeanCard({ collectionItem, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl p-4 shadow-[0_1px_4px_rgba(44,24,16,0.06),0_4px_12px_rgba(44,24,16,0.04)]
-        hover:shadow-[0_2px_8px_rgba(44,24,16,0.1),0_8px_24px_rgba(44,24,16,0.06)]
+      className="w-full text-left bg-white rounded-2xl p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)]
+        hover:shadow-[0_2px_8px_rgba(0,0,0,0.1),0_8px_24px_rgba(0,0,0,0.06)]
         transition-shadow duration-200 group
         focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2"
       style={{ minHeight: 48 }}
@@ -537,7 +538,7 @@ function RecipeTracker({ recipes, onChange }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(44,24,16,0.06)]">
+    <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between mb-1">
         <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide flex items-center gap-2">
           <SlidersHorizontal size={16} className="text-[var(--color-caramel)]" />
@@ -871,7 +872,7 @@ function DiscoverView({ state, dispatch, showToast }) {
                     <div
                       key={bean.id}
                       className="flex items-center justify-between bg-white rounded-xl px-3 py-3
-                        shadow-[0_1px_3px_rgba(44,24,16,0.04)]"
+                        shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
                     >
                       <button
                         onClick={() => dispatch({ type: 'VIEW_BEAN_DETAIL', beanId: bean.id })}
@@ -1007,7 +1008,7 @@ function BeanDetailView({ state, dispatch, showToast }) {
 
       <div className="px-4 space-y-6 mt-2">
         {/* Bean Info Card — Law of Common Region */}
-        <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(44,24,16,0.06)]">
+        <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
           {/* Origin with flag */}
           <div className="flex items-center gap-3 mb-4">
             <span className="text-3xl">{COUNTRY_FLAGS[bean.origin] || '🌍'}</span>
@@ -1063,7 +1064,7 @@ function BeanDetailView({ state, dispatch, showToast }) {
             />
 
             {/* Rating Section */}
-            <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(44,24,16,0.06)]">
+            <div className="bg-white rounded-2xl p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
               <h3 className="text-sm font-bold text-[var(--color-text-primary)] uppercase tracking-wide mb-4 flex items-center gap-2">
                 <Star size={16} className="text-[var(--color-caramel)]" />
                 Deine Bewertung
@@ -1290,7 +1291,7 @@ function AddView({ state, dispatch, showToast }) {
         <button
           onClick={() => dispatch({ type: 'NAVIGATE_TAB', tab: 'discover' })}
           className="w-full bg-white rounded-2xl p-5 text-left flex items-center gap-4
-            shadow-[0_1px_4px_rgba(44,24,16,0.06)] hover:shadow-[0_2px_8px_rgba(44,24,16,0.1)]
+            shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]
             transition-shadow
             focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
           style={{ minHeight: 48 }}
@@ -1310,7 +1311,7 @@ function AddView({ state, dispatch, showToast }) {
         <button
           onClick={() => dispatch({ type: 'START_ADD_MANUAL' })}
           className="w-full bg-white rounded-2xl p-5 text-left flex items-center gap-4
-            shadow-[0_1px_4px_rgba(44,24,16,0.06)] hover:shadow-[0_2px_8px_rgba(44,24,16,0.1)]
+            shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]
             transition-shadow
             focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
           style={{ minHeight: 48 }}
@@ -1619,9 +1620,9 @@ function FirstUseHint({ onDismiss }) {
 
 function BottomNav({ activeTab, onNavigate, collectionCount }) {
   const tabs = [
-    { id: 'collection', label: 'Sammlung', icon: Coffee, badge: collectionCount },
-    { id: 'discover', label: 'Entdecken', icon: Search },
-    { id: 'add', label: 'Hinzufügen', icon: Plus },
+    { id: 'collection', label: 'Sammlung', icon: TapeCup2, badge: collectionCount },
+    { id: 'discover', label: 'Entdecken', icon: TapeSearch },
+    { id: 'add', label: 'Hinzufügen', icon: TapePlus },
   ];
 
   return (
@@ -1631,7 +1632,7 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
       role="tablist"
       aria-label="Hauptnavigation"
     >
-      <div className="flex items-center justify-around px-4 h-16">
+      <div className="flex items-center justify-around px-4 h-14 pt-2">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1643,8 +1644,8 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
                 transition-colors py-2 px-4
                 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] rounded-lg
                 ${isActive
-                  ? 'text-[var(--color-caramel)]'
-                  : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
+                  ? 'text-black'
+                  : 'text-black/40 hover:text-black/60'
                 }`}
               style={{ minWidth: 64, minHeight: 48 }}
               role="tab"
@@ -1652,7 +1653,7 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
               aria-label={tab.label}
             >
               <div className="relative">
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                <Icon size={26} strokeWidth={isActive ? 2.5 : 2} />
                 {tab.badge > 0 && (
                   <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 rounded-full bg-[var(--color-caramel)]
                     text-white text-[10px] font-bold flex items-center justify-center px-1">
@@ -1663,9 +1664,6 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
               <span className={`text-[10px] font-medium ${isActive ? 'font-semibold' : ''}`}>
                 {tab.label}
               </span>
-              {isActive && (
-                <div className="absolute -top-px left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-[var(--color-caramel)]" />
-              )}
             </button>
           );
         })}
@@ -1764,6 +1762,7 @@ function PasswordGate({ children }) {
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { showToast, hideToast } = useToast(dispatch);
+  const [showCupPicker, setShowCupPicker] = useState(false);
 
   // Persist collection & firstUse to localStorage on every change
   useEffect(() => {
@@ -1812,6 +1811,14 @@ export default function App() {
         onDismiss={hideToast}
         onUndo={() => state.toast?.undoAction?.()}
       />
+
+      {/* Temporary: Cup style picker */}
+      {showCupPicker && (
+        <CupShowcase
+          onSelect={(id) => { console.log('Selected cup:', id); setShowCupPicker(false); }}
+          onClose={() => setShowCupPicker(false)}
+        />
+      )}
     </PasswordGate>
   );
 }

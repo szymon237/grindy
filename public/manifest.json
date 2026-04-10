@@ -5,8 +5,8 @@
   "start_url": "/grindy/",
   "scope": "/grindy/",
   "display": "standalone",
-  "background_color": "#2C1810",
-  "theme_color": "#2C1810",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {

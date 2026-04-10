@@ -1,4 +1,4 @@
-const CACHE_NAME = 'grindy-v2';
+const CACHE_NAME = 'grindy-v3';
 const BASE = '/grindy/';
 
 // Assets to cache on install
@@ -57,6 +57,7 @@ self.addEventListener('fetch', event => {
       return fetch(request).then(response => {
         if (response.ok && (
           request.url.includes('/assets/') ||
+          request.url.includes('/logos/') ||
           request.url.includes('fonts.googleapis') ||
           request.url.includes('fonts.gstatic')
         )) {

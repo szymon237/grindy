@@ -19,13 +19,14 @@ export const GRINDER = {
   step: 0.5, // stepless, but 0.5 increments are practical
 };
 
-// Drink types with sensible Niche Zero defaults & typical dose/yield
+// Drink types — Rocket Appartamento + Niche Zero
+// Single: 9g bottomless | Double: 18g spouted | Café Crème: 16g
 export const DRINK_TYPES = [
   {
     id: 'single',
     label: 'Single Shot',
     emoji: '☕',
-    defaults: { grind: 15, dose: 9, yield: 28, time: 27 },
+    defaults: { grind: 14, dose: 9, yield: 18, time: 26 },
     grindRange: [8, 22],
   },
   {
@@ -33,14 +34,14 @@ export const DRINK_TYPES = [
     label: 'Double Shot',
     emoji: '☕☕',
     defaults: { grind: 15, dose: 18, yield: 36, time: 28 },
-    grindRange: [8, 22],
+    grindRange: [8, 25],
   },
   {
     id: 'cafe-creme',
     label: 'Café Crème',
     emoji: '🫗',
-    defaults: { grind: 22, dose: 16, yield: 120, time: 27 },
-    grindRange: [18, 30],
+    defaults: { grind: 25, dose: 16, yield: 120, time: 27 },
+    grindRange: [20, 35],
   },
 ];
 
@@ -79,6 +80,7 @@ export const COUNTRY_FLAGS = {
   'Myanmar': '🇲🇲',
   'Indien': '🇮🇳',
   'Nicaragua': '🇳🇮',
+  'Malawi': '🇲🇼',
 };
 
 let beanId = 1;
@@ -97,95 +99,175 @@ const b = (roastery, roasteryCity, name, origin, region, processing, roast, vari
 });
 
 export const COFFEE_DATABASE = [
-  // The Barn (Berlin)
-  b('The Barn', 'Berlin', 'Nano Challa', 'Äthiopien', 'Jimma', 'washed', 'light', 'Heirloom', '1900-2100m', ['Jasmin', 'Zitrus', 'Steinobst']),
-  b('The Barn', 'Berlin', 'El Vergel Lychee', 'Kolumbien', 'Tolima', 'anaerobic', 'light', 'Castillo', '1800m', ['Tropenfrüchte', 'Blumen', 'Honig']),
-  b('The Barn', 'Berlin', 'Giakanja', 'Kenia', 'Nyeri', 'washed', 'light', 'SL28', '1700m', ['Brombeere', 'Zitrus', 'Karamell']),
+  // ── Berlin ───────────────────────────────────────
 
-  // Bonanza Coffee (Berlin)
-  b('Bonanza Coffee', 'Berlin', 'Kilenso Moconissa', 'Äthiopien', 'Guji', 'natural', 'light', 'Heirloom', '2000-2200m', ['Blaubeere', 'Erdbeere', 'Schokolade']),
-  b('Bonanza Coffee', 'Berlin', 'La Palma', 'Kolumbien', 'Huila', 'washed', 'light-medium', 'Caturra', '1750m', ['Karamell', 'Orange', 'Nuss']),
-  b('Bonanza Coffee', 'Berlin', 'Daterra', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Yellow Bourbon', '1100m', ['Schokolade', 'Nuss', 'Karamell']),
+  // The Barn — Roaster of the Year 2025
+  b('The Barn', 'Berlin', 'Nano Challa', 'Äthiopien', 'Jimma', 'washed', 'light', 'Heirloom', '1900-2100m', ['Steinobst', 'Vanille', 'Jasmin']),
+  b('The Barn', 'Berlin', 'El Vergel', 'Kolumbien', 'Tolima', 'washed', 'light', 'Castillo', '1800m', ['Karamell', 'Tropenfrüchte', 'Schokolade']),
+  b('The Barn', 'Berlin', 'Daye Bensa', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '2000m', ['Blaubeere', 'Erdbeere', 'Schokolade']),
 
-  // Five Elephant (Berlin)
-  b('Five Elephant', 'Berlin', 'Rumukia', 'Kenia', 'Nyeri', 'washed', 'light', 'SL28/SL34', '1800m', ['Beeren', 'Zitrus', 'Toffee']),
-  b('Five Elephant', 'Berlin', 'Finca San Sebastián', 'Guatemala', 'Huehuetenango', 'washed', 'light-medium', 'Bourbon', '1600m', ['Schokolade', 'Steinobst', 'Honig']),
+  // Bonanza Coffee
+  b('Bonanza Coffee', 'Berlin', 'Bonanza Blend', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Yellow Bourbon', '1100m', ['Schokolade', 'Beeren', 'Karamell']),
+  b('Bonanza Coffee', 'Berlin', 'Das Almas', 'Brasilien', 'Cerrado', 'natural', 'light-medium', 'Yellow Bourbon', '1100m', ['Karamell', 'Beeren', 'Schokolade']),
+  b('Bonanza Coffee', 'Berlin', 'Gitesi', 'Ruanda', 'Nyamasheke', 'washed', 'light', 'Red Bourbon', '1800m', ['Beeren', 'Zitrus', 'Honig']),
 
-  // Father Carpenter (Berlin)
-  b('Father Carpenter', 'Berlin', 'Guji Natural', 'Äthiopien', 'Guji', 'natural', 'light', 'Heirloom', '2100m', ['Blaubeere', 'Tropenfrüchte', 'Vanille']),
-  b('Father Carpenter', 'Berlin', 'San Ignacio', 'Peru', 'Cajamarca', 'washed', 'medium', 'Typica', '1700m', ['Schokolade', 'Karamell', 'Mandel']),
+  // Five Elephant — Kreuzberg
+  b('Five Elephant', 'Berlin', 'Serra Dos Ciganos', 'Brasilien', 'Caconde', 'natural', 'medium', 'Bourbon', '1200m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('Five Elephant', 'Berlin', 'House Espresso', 'Kolumbien', 'Huila', 'washed', 'light-medium', 'Caturra', '1700m', ['Schokolade', 'Steinobst', 'Honig']),
 
-  // Hoppenworth & Ploch (Frankfurt)
-  b('Hoppenworth & Ploch', 'Frankfurt', 'Kochere', 'Äthiopien', 'Yirgacheffe', 'washed', 'light', 'Heirloom', '1900m', ['Jasmin', 'Zitrus', 'Honig']),
-  b('Hoppenworth & Ploch', 'Frankfurt', 'Santa Bárbara', 'Honduras', 'Santa Bárbara', 'honey', 'light-medium', 'Catuaí', '1500m', ['Karamell', 'Steinobst', 'Nuss']),
-  b('Hoppenworth & Ploch', 'Frankfurt', 'Cerrado Blend', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Mundo Novo', '1050m', ['Nuss', 'Schokolade', 'Toffee']),
+  // Father Carpenter — Münzstraße
+  b('Father Carpenter', 'Berlin', 'Finca Santa Elisa', 'Panama', 'Chiriquí', 'washed', 'light', 'Geisha', '1800m', ['Jasmin', 'Tropenfrüchte', 'Zitrus']),
+  b('Father Carpenter', 'Berlin', 'Finca Montreal', 'Kolumbien', 'Huila', 'washed', 'light', 'Caturra', '1800m', ['Karamell', 'Steinobst', 'Orange']),
 
-  // Elbgold (Hamburg)
-  b('Elbgold', 'Hamburg', 'Sidamo', 'Äthiopien', 'Sidamo', 'washed', 'light', 'Heirloom', '1800m', ['Blumen', 'Zitrus', 'Honig']),
-  b('Elbgold', 'Hamburg', 'La Ventana', 'Kolumbien', 'Nariño', 'washed', 'light-medium', 'Castillo', '1900m', ['Karamell', 'Beeren', 'Orange']),
-  b('Elbgold', 'Hamburg', 'Fazenda Rainha', 'Brasilien', 'Sul de Minas', 'natural', 'medium', 'Yellow Bourbon', '1200m', ['Schokolade', 'Nuss', 'Vanille']),
+  // Röststätte — Spezialitätenkaffee & Baristakurse
+  b('Röststätte', 'Berlin', 'Novum', 'Äthiopien', 'Sidamo', 'washed', 'light-medium', 'Heirloom', '1900m', ['Beeren', 'Schokolade', 'Zitrus']),
+  b('Röststätte', 'Berlin', 'Gakuyu AA', 'Kenia', 'Kirinyaga', 'washed', 'light', 'SL28', '1800m', ['Brombeere', 'Zitrus', 'Mandel']),
+  b('Röststätte', 'Berlin', 'Gesha Anaerobic', 'Kolumbien', 'Huila', 'anaerobic', 'light', 'Gesha', '1800m', ['Jasmin', 'Tropenfrüchte', 'Zitrus']),
 
-  // Public Coffee Roasters (Hamburg)
-  b('Public Coffee Roasters', 'Hamburg', 'Chelelektu', 'Äthiopien', 'Yirgacheffe', 'washed', 'light', 'Heirloom', '2000m', ['Jasmin', 'Beeren', 'Zitrus']),
-  b('Public Coffee Roasters', 'Hamburg', 'Hacienda Sonora', 'Costa Rica', 'West Valley', 'honey', 'light-medium', 'Villa Sarchí', '1500m', ['Honig', 'Steinobst', 'Karamell']),
+  // Coffee Circle — Direct Trade & Social Impact
+  b('Coffee Circle', 'Berlin', 'Buna Dimaa', 'Äthiopien', 'Sidamo', 'natural', 'medium-dark', 'Heirloom', '1900m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('Coffee Circle', 'Berlin', 'Limu', 'Äthiopien', 'Limu', 'washed', 'medium', 'Heirloom', '1900m', ['Beeren', 'Schokolade', 'Blumen']),
+  b('Coffee Circle', 'Berlin', 'Yirgacheffe', 'Äthiopien', 'Yirgacheffe', 'natural', 'medium', 'Heirloom', '1900m', ['Vanille', 'Beeren', 'Blumen']),
 
-  // Nord Coast Coffee (Hamburg)
-  b('Nord Coast Coffee', 'Hamburg', 'Limu', 'Äthiopien', 'Limu', 'washed', 'light-medium', 'Heirloom', '1700m', ['Blumen', 'Zitrus', 'Gewürze']),
-  b('Nord Coast Coffee', 'Hamburg', 'Tarrazú', 'Costa Rica', 'Tarrazú', 'washed', 'medium', 'Caturra', '1400m', ['Schokolade', 'Orange', 'Karamell']),
+  // 19grams — Specialty Coffee seit 2002
+  b('19grams', 'Berlin', 'Wild At Heart', 'Brasilien', 'Sul de Minas', 'natural', 'medium', 'Yellow Bourbon', '1150m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('19grams', 'Berlin', 'Little Flower', 'Äthiopien', 'Guji', 'natural', 'light', 'Heirloom', '2000m', ['Blumen', 'Beeren', 'Zitrus']),
+  b('19grams', 'Berlin', 'Berlinkaffee', 'Kolumbien', 'Cauca', 'washed', 'light-medium', 'Pink Bourbon', '1850m', ['Beeren', 'Tropenfrüchte', 'Karamell']),
 
-  // Machhorndl (Nürnberg)
-  b('Machhorndl', 'Nürnberg', 'Yirgacheffe Aricha', 'Äthiopien', 'Yirgacheffe', 'natural', 'light', 'Heirloom', '1950m', ['Erdbeere', 'Blumen', 'Tropenfrüchte']),
-  b('Machhorndl', 'Nürnberg', 'Finca El Injerto', 'Guatemala', 'Huehuetenango', 'washed', 'light-medium', 'Bourbon', '1650m', ['Schokolade', 'Honig', 'Nuss']),
+  // Flying Roasters — Vogelwelt-Benennungen
+  b('Flying Roasters', 'Berlin', 'Nightingale', 'Brasilien', 'Cerrado', 'natural', 'medium-dark', 'Mundo Novo', '1000m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('Flying Roasters', 'Berlin', 'Blackcap', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1700m', ['Nuss', 'Schokolade', 'Karamell']),
+  b('Flying Roasters', 'Berlin', 'Fire Finch', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '1950m', ['Erdbeere', 'Schokolade', 'Beeren']),
 
-  // Rösterei Vier (Nürnberg)
-  b('Rösterei Vier', 'Nürnberg', 'Nyamasheke', 'Ruanda', 'Nyamasheke', 'washed', 'light', 'Red Bourbon', '1800m', ['Beeren', 'Zitrus', 'Karamell']),
-  b('Rösterei Vier', 'Nürnberg', 'Mogiana', 'Brasilien', 'São Paulo', 'natural', 'medium', 'Mundo Novo', '1000m', ['Nuss', 'Schokolade', 'Toffee']),
+  // ── Hamburg ──────────────────────────────────────
 
-  // JB Kaffee (Dortmund)
-  b('JB Kaffee', 'Dortmund', 'Worka Sakaro', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '2100m', ['Blaubeere', 'Schokolade', 'Vanille']),
-  b('JB Kaffee', 'Dortmund', 'La Ceiba', 'Honduras', 'Marcala', 'washed', 'medium', 'Catuaí', '1500m', ['Karamell', 'Nuss', 'Schokolade']),
+  // Elbgold — Specialty Coffee seit 2004
+  b('Elbgold', 'Hamburg', 'Neunbar', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Yellow Bourbon', '1100m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('Elbgold', 'Hamburg', 'Sechs A', 'El Salvador', 'Santa Ana', 'washed', 'light-medium', 'Red Bourbon', '1500m', ['Karamell', 'Steinobst', 'Beeren']),
+  b('Elbgold', 'Hamburg', 'Bombe', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '1900m', ['Blaubeere', 'Erdbeere', 'Blumen']),
 
-  // Röststätte (Berlin)
-  b('Röststätte', 'Berlin', 'Duromina', 'Äthiopien', 'Jimma', 'washed', 'light', 'Heirloom', '2000m', ['Jasmin', 'Steinobst', 'Honig']),
-  b('Röststätte', 'Berlin', 'Finca Hartmann', 'Panama', 'Chiriquí', 'washed', 'light-medium', 'Geisha', '1800m', ['Jasmin', 'Tropenfrüchte', 'Zitrus']),
-  b('Röststätte', 'Berlin', 'Decaf Colombia', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1600m', ['Schokolade', 'Karamell', 'Mandel']),
+  // Public Coffee Roasters
+  b('Public Coffee Roasters', 'Hamburg', 'Moonlight', 'Kolumbien', 'Nariño', 'washed', 'medium', 'Castillo', '1900m', ['Schokolade', 'Karamell', 'Nuss']),
+  b('Public Coffee Roasters', 'Hamburg', 'Black Pearl', 'Brasilien', 'Sul de Minas', 'natural', 'medium-dark', 'Yellow Bourbon', '1200m', ['Schokolade', 'Nuss', 'Toffee']),
 
-  // Coffee Circle (Berlin)
-  b('Coffee Circle', 'Berlin', 'Limu Kaffee', 'Äthiopien', 'Limu', 'washed', 'light-medium', 'Heirloom', '1800m', ['Blumen', 'Zitrus', 'Honig']),
-  b('Coffee Circle', 'Berlin', 'Yirga Santos', 'Äthiopien', 'Yirgacheffe', 'natural', 'medium', 'Heirloom', '1900m', ['Beeren', 'Schokolade', 'Gewürze']),
-  b('Coffee Circle', 'Berlin', 'Cerrado Kaffee', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Catuaí', '1100m', ['Nuss', 'Schokolade', 'Karamell']),
+  // Nord Coast Coffee — Deichstraße am Nikolaifleet
+  b('Nord Coast Coffee', 'Hamburg', 'Black Opium', 'Brasilien', 'Cerrado', 'natural', 'medium-dark', 'Mundo Novo', '1000m', ['Schokolade', 'Nuss', 'Gewürze']),
+  b('Nord Coast Coffee', 'Hamburg', 'Guatemala Las Capuchinas', 'Guatemala', 'Antigua', 'washed', 'light-medium', 'Bourbon', '1500m', ['Schokolade', 'Steinobst', 'Honig']),
 
-  // 19grams (Berlin)
-  b('19grams', 'Berlin', 'Benti Nenka', 'Äthiopien', 'Jimma', 'washed', 'light', 'Heirloom', '2000m', ['Zitrus', 'Blumen', 'Steinobst']),
-  b('19grams', 'Berlin', 'Finca La Esperanza', 'Kolumbien', 'Cauca', 'washed', 'light-medium', 'Pink Bourbon', '1850m', ['Beeren', 'Tropenfrüchte', 'Karamell']),
-  b('19grams', 'Berlin', 'House Blend', 'Brasilien', 'Sul de Minas', 'natural', 'medium', 'Yellow Bourbon', '1150m', ['Schokolade', 'Nuss', 'Karamell']),
+  // Quijote Kaffee — Direktimport-Rösterei
+  b('Quijote Kaffee', 'Hamburg', 'Porcellinchen', 'Brasilien', 'Cerrado', 'natural', 'medium-dark', 'Mundo Novo', '1000m', ['Schokolade', 'Gewürze', 'Nuss']),
+  b('Quijote Kaffee', 'Hamburg', 'Flying Pingo', 'Peru', 'Cajamarca', 'washed', 'light', 'Typica', '1700m', ['Zitrus', 'Beeren', 'Tropenfrüchte']),
+  b('Quijote Kaffee', 'Hamburg', 'Hanni das Honighörnchen', 'Honduras', 'Marcala', 'honey', 'light', 'Catuaí', '1500m', ['Tropenfrüchte', 'Steinobst', 'Honig']),
 
-  // Heilandt (Köln)
+  // ── Düsseldorf ───────────────────────────────────
+
+  // SCHVARZ — Mikrorösterei Alte Farbwerke, Flingern
+  // Espresso
+  b('SCHVARZ', 'Düsseldorf', 'VRN', 'Brasilien', 'Blend', 'natural', 'medium', 'Catuai', '750-1000m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('SCHVARZ', 'Düsseldorf', 'FLR', 'Brasilien', 'Blend', 'natural', 'medium-dark', 'Catuai', '750-1000m', ['Schokolade', 'Gewürze', 'Nuss']),
+  b('SCHVARZ', 'Düsseldorf', 'Chocolate Blend', 'Brasilien', 'Blend', 'natural', 'medium', 'Catuai', '750-1500m', ['Schokolade', 'Mandel', 'Karamell']),
+  b('SCHVARZ', 'Düsseldorf', 'LAX', 'Brasilien', 'Blend', 'natural', 'light', 'Mixed', '1000-1900m', ['Zitrus', 'Tropenfrüchte', 'Honig']),
+  b('SCHVARZ', 'Düsseldorf', 'MXP', 'Brasilien', 'Blend', 'natural', 'medium-dark', 'Yellow Bourbon PB', '750-1200m', ['Gewürze', 'Schokolade', 'Nuss']),
+  b('SCHVARZ', 'Düsseldorf', 'Nicaragua El Limoncillo', 'Nicaragua', 'Matagalpa', 'washed', 'medium-dark', 'Red Catuai', '850-1200m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('SCHVARZ', 'Düsseldorf', 'Brasilien Paubrasilia', 'Brasilien', 'Cerrado Mineiro', 'natural', 'medium', 'Catuai', '750-1000m', ['Mandel', 'Schokolade', 'Karamell']),
+  b('SCHVARZ', 'Düsseldorf', 'Kolumbien Decaf', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1700m', ['Schokolade', 'Karamell', 'Nuss']),
+  // Filter
+  b('SCHVARZ', 'Düsseldorf', 'DUS', 'Brasilien', 'Blend', 'natural', 'light-medium', 'Yellow Bourbon', '1100-1450m', ['Nuss', 'Schokolade', 'Karamell']),
+  b('SCHVARZ', 'Düsseldorf', 'Ruanda Huye Mountain', 'Ruanda', 'Huye', 'washed', 'medium', 'Red Bourbon', '1800-2200m', ['Orange', 'Honig', 'Tropenfrüchte']),
+  b('SCHVARZ', 'Düsseldorf', 'Äthiopien Sawana', 'Äthiopien', 'Guji', 'washed', 'light', 'Heirloom', '1920-2150m', ['Jasmin', 'Tropenfrüchte', 'Honig']),
+  b('SCHVARZ', 'Düsseldorf', 'Costa Rica Java', 'Costa Rica', 'Pérez Zeledón', 'natural', 'light-medium', 'Java', '1300-1700m', ['Schokolade', 'Beeren', 'Karamell']),
+
+  // RVTC — Rösterei Vier The Commonage, Altstadt
+  b('RVTC', 'Düsseldorf', 'Italo Pop', 'Tansania', 'Kilimanjaro', 'natural', 'medium-dark', 'Bourbon', '1500m', ['Gewürze', 'Schokolade', 'Nuss']),
+  b('RVTC', 'Düsseldorf', 'Garage House', 'Kolumbien', 'Huila', 'washed', 'light-medium', 'Castillo', '1800m', ['Nuss', 'Karamell', 'Schokolade']),
+  b('RVTC', 'Düsseldorf', 'Jungle Boogie', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '1900m', ['Tropenfrüchte', 'Beeren', 'Gewürze']),
+
+  // Carl Ferdinand — Röstfabrik Pempelfort, Winde-der-See Blends
+  b('Carl Ferdinand', 'Düsseldorf', 'Levante', 'Äthiopien', 'Yirgacheffe', 'washed', 'light-medium', 'Heirloom', '1900m', ['Blumen', 'Zitrus', 'Honig']),
+  b('Carl Ferdinand', 'Düsseldorf', 'Chirocco', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Yellow Bourbon', '1100m', ['Schokolade', 'Nuss', 'Karamell']),
+
+  // Röstzeit — Highland-Röstungen, drei Standorte
+  b('Röstzeit', 'Düsseldorf', 'Kolumbien El Silencio', 'Kolumbien', 'Huila', 'washed', 'medium', 'Castillo', '1700m', ['Schokolade', 'Karamell', 'Nuss']),
+  b('Röstzeit', 'Düsseldorf', 'Röstzeit Espresso', 'Brasilien', 'Cerrado', 'natural', 'medium-dark', 'Yellow Bourbon', '1100m', ['Schokolade', 'Nuss', 'Gewürze']),
+  b('Röstzeit', 'Düsseldorf', 'Brasil Miaki', 'Brasilien', 'Sul de Minas', 'natural', 'medium', 'Mundo Novo', '1100m', ['Nuss', 'Schokolade', 'Karamell']),
+
+  // ── Weitere Städte ───────────────────────────────
+
+  // Hoppenworth & Ploch (Frankfurt) — Roaster of the Year 2021
+  b('Hoppenworth & Ploch', 'Frankfurt', 'Las Moras', 'Kolumbien', 'Huila', 'washed', 'light', 'Caturra', '1700m', ['Orange', 'Karamell', 'Honig']),
+  b('Hoppenworth & Ploch', 'Frankfurt', 'La Primavera', 'Kolumbien', 'Huila', 'washed', 'light', 'Caturra', '1800m', ['Zitrus', 'Tropenfrüchte', 'Jasmin']),
+  b('Hoppenworth & Ploch', 'Frankfurt', 'Tabe Burka', 'Äthiopien', 'Yirgacheffe', 'washed', 'light', 'Heirloom', '1900m', ['Jasmin', 'Zitrus', 'Honig']),
+
+  // Machhorndl (Nürnberg) — Single Origin Pioniere seit 2008
+  b('Machhorndl', 'Nürnberg', 'Kenia Thageini', 'Kenia', 'Nyeri', 'washed', 'light', 'SL28', '1800m', ['Beeren', 'Blumen', 'Zitrus']),
+  b('Machhorndl', 'Nürnberg', 'Äthiopien Chelbesa', 'Äthiopien', 'Yirgacheffe', 'natural', 'light', 'Heirloom', '1950m', ['Erdbeere', 'Blumen', 'Zitrus']),
+
+  // Heilandt (Köln) — 100% Direct Trade seit 2010
   b('Heilandt', 'Köln', 'Äthiopien Guji', 'Äthiopien', 'Guji', 'natural', 'light', 'Heirloom', '2100m', ['Blaubeere', 'Erdbeere', 'Vanille']),
-  b('Heilandt', 'Köln', 'Huila Excelso', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1700m', ['Schokolade', 'Karamell', 'Nuss']),
+  b('Heilandt', 'Köln', 'Kolumbien Huila', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1700m', ['Schokolade', 'Karamell', 'Nuss']),
 
-  // Martermühle (München)
-  b('Martermühle', 'München', 'Indian Monsooned', 'Indien', 'Malabar', 'natural', 'medium-dark', 'Robusta/Arabica', '600m', ['Gewürze', 'Schokolade', 'Nuss']),
-  b('Martermühle', 'München', 'Nicaragua Maragogype', 'Nicaragua', 'Jinotega', 'washed', 'medium', 'Maragogype', '1200m', ['Schokolade', 'Honig', 'Mandel']),
-  b('Martermühle', 'München', 'Espresso Bohne', 'Brasilien', 'Cerrado', 'natural', 'medium-dark', 'Mundo Novo', '1000m', ['Schokolade', 'Nuss', 'Toffee']),
+  // Martermühle (München) — Bayerische Handrösterei
+  b('Martermühle', 'München', 'Aßlinger Mischung', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Mundo Novo', '1000m', ['Schokolade', 'Nuss', 'Karamell']),
+  b('Martermühle', 'München', 'Guatemala', 'Guatemala', 'Antigua', 'washed', 'medium', 'Bourbon', '1500m', ['Schokolade', 'Gewürze', 'Karamell']),
+  b('Martermühle', 'München', 'Colombia', 'Kolumbien', 'Huila', 'washed', 'medium', 'Caturra', '1700m', ['Schokolade', 'Honig', 'Mandel']),
 
-  // Supremo (München/Unterhaching)
-  b('Supremo', 'München', 'Kenia Kiambu', 'Kenia', 'Kiambu', 'washed', 'light-medium', 'SL28', '1700m', ['Beeren', 'Zitrus', 'Toffee']),
-  b('Supremo', 'München', 'Guatemala Antigua', 'Guatemala', 'Antigua', 'washed', 'medium', 'Bourbon', '1500m', ['Schokolade', 'Gewürze', 'Karamell']),
+  // Supremo (München) — Familienrösterei mit Rohkaffee-Humidor
+  b('Supremo', 'München', 'Blackberry', 'Kolumbien', 'Huila', 'natural', 'light', 'Caturra', '1800m', ['Beeren', 'Brombeere', 'Schokolade']),
+  b('Supremo', 'München', 'Family Celebration', 'Brasilien', 'Cerrado', 'natural', 'medium', 'Yellow Bourbon', '1100m', ['Schokolade', 'Karamell', 'Nuss']),
+  b('Supremo', 'München', 'Familia Marin', 'Costa Rica', 'Central Valley', 'honey', 'light-medium', 'Villa Sarchí', '1500m', ['Schokolade', 'Beeren', 'Karamell']),
 
-  // Cross Coffee (Bremen)
-  b('Cross Coffee', 'Bremen', 'El Salvador Finca', 'El Salvador', 'Santa Ana', 'honey', 'light-medium', 'Pacamara', '1400m', ['Steinobst', 'Honig', 'Karamell']),
-  b('Cross Coffee', 'Bremen', 'Rwanda Buf', 'Ruanda', 'Nyamasheke', 'washed', 'light', 'Red Bourbon', '1900m', ['Beeren', 'Zitrus', 'Blumen']),
-
-  // Flying Roasters (Berlin)
-  b('Flying Roasters', 'Berlin', 'Aramo', 'Äthiopien', 'Sidamo', 'washed', 'light', 'Heirloom', '1950m', ['Jasmin', 'Zitrus', 'Honig']),
-  b('Flying Roasters', 'Berlin', 'Volcan Azul', 'Costa Rica', 'Central Valley', 'honey', 'light-medium', 'SL28', '1400m', ['Tropenfrüchte', 'Karamell', 'Honig']),
-
-  // Quijote Kaffee (Hamburg)
-  b('Quijote Kaffee', 'Hamburg', 'Kamwangi', 'Kenia', 'Kirinyaga', 'washed', 'light', 'SL28/SL34', '1800m', ['Brombeere', 'Zitrus', 'Steinobst']),
-  b('Quijote Kaffee', 'Hamburg', 'Finca Tasta', 'Kolumbien', 'Huila', 'washed', 'light-medium', 'Caturra', '1750m', ['Karamell', 'Beeren', 'Schokolade']),
-  b('Quijote Kaffee', 'Hamburg', 'Myanmar Mogok', 'Myanmar', 'Shan State', 'natural', 'light', 'Catimor', '1200m', ['Tropenfrüchte', 'Blumen', 'Gewürze']),
+  // Cross Coffee (Bremen) — Erste Specialty Rösterei Bremens
+  b('Cross Coffee', 'Bremen', 'Tunki', 'Peru', 'Puno', 'washed', 'light-medium', 'Typica', '1700m', ['Schokolade', 'Nuss', 'Honig']),
+  b('Cross Coffee', 'Bremen', 'La Cristalina', 'Kolumbien', 'Huila', 'washed', 'light', 'Caturra', '1800m', ['Beeren', 'Zitrus', 'Karamell']),
 ];
+
+// ── Smart Recipe Defaults ──────────────────────
+// Berechnet Startrezepte basierend auf Röstgrad & Processing
+// Optimiert für: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
+// Single Basket: 9g bodenlos | Double Basket: 18g
+
+const ROAST_RECIPE_MAP = {
+  // [grindSingle, grindDouble, grindCreme, doseSingle, doseDouble, doseCreme, yieldSingle, yieldDouble, yieldCreme, timeSingle, timeDouble, timeCreme]
+  'light':        [19, 20, 28, 9, 18, 16, 22, 45, 130, 28, 30, 30],
+  'light-medium': [16, 17, 27, 9, 18, 16, 20, 40, 125, 27, 29, 28],
+  'medium':       [14, 15, 25, 9, 18, 16, 18, 36, 120, 26, 28, 27],
+  'medium-dark':  [12, 13, 24, 9, 18, 16, 16, 32, 120, 25, 27, 27],
+  'dark':         [10, 11, 22, 8, 17, 16, 14, 29, 120, 24, 26, 27],
+};
+
+// Natural/Anaerobic: etwas gröber (+1), mehr Solubles
+const PROCESSING_GRIND_OFFSET = {
+  'washed': 0,
+  'natural': 1,
+  'honey': 0.5,
+  'anaerobic': 1,
+};
+
+export function getRecipeDefaults(bean) {
+  const base = ROAST_RECIPE_MAP[bean.roast] || ROAST_RECIPE_MAP['medium'];
+  const offset = PROCESSING_GRIND_OFFSET[bean.processing] || 0;
+
+  return {
+    single: {
+      grind: Math.round((base[0] + offset) * 2) / 2, // Niche 0.5er Schritte
+      dose: base[3],
+      yield: base[6],
+      time: base[9],
+    },
+    double: {
+      grind: Math.round((base[1] + offset) * 2) / 2,
+      dose: base[4],
+      yield: base[7],
+      time: base[10],
+    },
+    'cafe-creme': {
+      grind: Math.round((base[2] + offset) * 2) / 2,
+      dose: base[5],
+      yield: base[8],
+      time: base[11],
+    },
+  };
+}
 
 // Group roasteries for the Discover view
 // Miller's Law: chunk into alphabetical groups

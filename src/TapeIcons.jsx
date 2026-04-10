@@ -2,6 +2,8 @@
 // Style: thick strokes, square caps, angular paths, slight imperfections
 // Inspired by tape-art / paper-cut aesthetic
 
+import { useState } from 'react';
+
 const TAPE = { strokeLinecap: 'square', strokeLinejoin: 'miter' };
 
 // ── Cup Variations ─────────────────────────────
@@ -89,6 +91,171 @@ export function TapePlus({ size = 24, strokeWidth = 2.5, className = '', ...prop
       <path d="M12.2 3.2 L11.8 20.8" strokeWidth={sw} />
       <path d="M3.2 12.2 L20.8 11.8" strokeWidth={sw} />
     </svg>
+  );
+}
+
+// ── Roastery Monogram Marks ────────────────────
+
+const ROASTERY_INITIALS = {
+  'The Barn': 'TB',
+  'Bonanza Coffee': 'BN',
+  'Five Elephant': 'FE',
+  'Father Carpenter': 'FC',
+  'Hoppenworth & Ploch': 'HP',
+  'Elbgold': 'EG',
+  'Public Coffee Roasters': 'PC',
+  'Nord Coast Coffee': 'NC',
+  'Machhorndl': 'MH',
+  'Röststätte': 'RÖ',
+  'Coffee Circle': 'CC',
+  '19grams': '19',
+  'Heilandt': 'HL',
+  'Martermühle': 'MM',
+  'Supremo': 'SU',
+  'Cross Coffee': 'XC',
+  'Flying Roasters': 'FR',
+  'Quijote Kaffee': 'QK',
+  'SCHVARZ': 'SV',
+  'RVTC': 'RV',
+  'Carl Ferdinand': 'CF',
+  'Röstzeit': 'RZ',
+};
+
+const ROASTERY_LOGO_SLUG = {
+  'The Barn': 'the-barn',
+  'Bonanza Coffee': 'bonanza',
+  'Five Elephant': 'five-elephant',
+  'Father Carpenter': 'father-carpenter',
+  // Hoppenworth: only 40px available, monogram fallback looks better
+  'Elbgold': 'elbgold',
+  'Public Coffee Roasters': 'public-coffee',
+  'Nord Coast Coffee': 'nord-coast',
+  'Machhorndl': 'machhorndl',
+  'Röststätte': 'roeststaette',
+  'Coffee Circle': 'coffee-circle',
+  '19grams': '19grams',
+  'Heilandt': 'heilandt',
+  'Martermühle': 'martermuehle',
+  'Supremo': 'supremo',
+  'Cross Coffee': 'cross-coffee',
+  'Flying Roasters': 'flying-roasters',
+  'Quijote Kaffee': 'quijote',
+  'SCHVARZ': 'schvarz',
+  'RVTC': 'rvtc',
+  'Carl Ferdinand': 'carl-ferdinand',
+  'Röstzeit': 'roestzeit',
+};
+
+const LOGO_EXT = { 'RVTC': 'svg' };
+
+// Simple hash to deterministically pick a mark variant per roastery
+function nameHash(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = ((h << 5) - h + name.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+/**
+ * RoasteryMark — Tape-cut monogram logo for each roastery
+ * Three variants cycle deterministically: circle, square, diamond
+ */
+export function RoasteryMark({ name, size = 52, className = '' }) {
+  const initials = ROASTERY_INITIALS[name]
+    || name.split(/[\s&]+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const variant = nameHash(name) % 3;
+  const half = size / 2;
+  const fontSize = size * 0.36;
+
+  const textEl = (
+    <text
+      x={half} y={half}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fill="#FFFFFF"
+      fontSize={fontSize}
+      fontWeight="800"
+      fontFamily="'DM Sans', system-ui, sans-serif"
+      letterSpacing="0.5"
+    >
+      {initials}
+    </text>
+  );
+
+  // Variant 0: Circle
+  if (variant === 0) {
+    return (
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
+        <circle cx={half} cy={half} r={half - 1} fill="#000" />
+        {textEl}
+      </svg>
+    );
+  }
+
+  // Variant 1: Rounded square
+  if (variant === 1) {
+    const r = size * 0.18;
+    return (
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
+        <rect x="1" y="1" width={size - 2} height={size - 2} rx={r} fill="#000" />
+        {textEl}
+      </svg>
+    );
+  }
+
+  // Variant 2: Diamond (rotated square)
+  const inset = size * 0.06;
+  const points = `${half},${inset} ${size - inset},${half} ${half},${size - inset} ${inset},${half}`;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
+      <polygon points={points} fill="#000" />
+      {textEl}
+    </svg>
+  );
+}
+
+/**
+ * RoasteryLogo — Real logo image with monogram fallback
+ * Displays the roastery's actual logo in a consistent rounded container.
+ * Falls back to RoasteryMark if the image fails to load.
+ */
+export function RoasteryLogo({ name, size = 48, className = '' }) {
+  const [failed, setFailed] = useState(false);
+  const slug = ROASTERY_LOGO_SLUG[name];
+  const ext = LOGO_EXT[name] || 'png';
+
+  if (!slug || failed) {
+    return <RoasteryMark name={name} size={size} className={className} />;
+  }
+
+  const base = import.meta.env.BASE_URL || '/';
+  const src = `${base}logos/${slug}.${ext}`;
+
+  return (
+    <div
+      className={className}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: size * 0.22,
+        overflow: 'hidden',
+        background: '#F5F5F5',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src={src}
+        alt={name}
+        onError={() => setFailed(true)}
+        style={{
+          width: size * 0.78,
+          height: size * 0.78,
+          objectFit: 'contain',
+        }}
+      />
+    </div>
   );
 }
 

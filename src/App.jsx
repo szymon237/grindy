@@ -6,14 +6,14 @@ import {
   Undo2, AlertCircle, Sparkles, ChevronDown, ChevronUp,
   Timer, Weight, GlassWater, CircleDot,
 } from 'lucide-react';
-import { TapeCoffee, TapeSearch, TapePlus, CupShowcase, TapeCup1, TapeCup2, TapeCup3, TapeCup4, TapeCup5 } from './TapeIcons';
+import { TapeCoffee, TapeSearch, TapePlus, CupShowcase, TapeCup1, TapeCup2, TapeCup3, TapeCup4, TapeCup5, RoasteryLogo } from './TapeIcons';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer,
 } from 'recharts';
 import {
   COFFEE_DATABASE, FLAVOR_NOTES, INITIAL_VISIBLE_TAGS,
   DRINK_TYPES, GRINDER, ROAST_LEVELS, PROCESSING_METHODS,
-  COUNTRY_FLAGS, getRoasteriesGrouped,
+  COUNTRY_FLAGS, getRoasteriesGrouped, getRecipeDefaults,
 } from './data/coffeeDatabase';
 
 // ──────────────────────────────────────────────
@@ -105,10 +105,14 @@ function reducer(state, action) {
     case 'ADD_TO_COLLECTION': {
       const bean = COFFEE_DATABASE.find(b => b.id === action.beanId);
       if (!bean || state.collection.some(c => c.beanId === action.beanId)) return state;
-      // Recipes: per drink type, store grind/dose/yield/time (null = not yet dialed in)
+      // Smart defaults basierend auf Röstgrad & Processing (Niche Zero + Rocket Appartamento)
+      const defaults = getRecipeDefaults(bean);
       const emptyRecipes = {};
       DRINK_TYPES.forEach(dt => {
-        emptyRecipes[dt.id] = { grind: null, dose: null, yield: null, time: null };
+        const d = defaults[dt.id];
+        emptyRecipes[dt.id] = d
+          ? { grind: d.grind, dose: d.dose, yield: d.yield, time: d.time }
+          : { grind: null, dose: null, yield: null, time: null };
       });
       const collectionItem = {
         id: Date.now(),
@@ -856,14 +860,17 @@ function DiscoverView({ state, dispatch, showToast }) {
             </span>
           </div>
           {filteredGrouped[letter].map(roastery => (
-            <div key={roastery.name} className="mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
-                  {roastery.name}
-                </h3>
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  {roastery.city}
-                </span>
+            <div key={roastery.name} className="mb-5">
+              <div className="flex items-center gap-3 mb-3">
+                <RoasteryLogo name={roastery.name} size={48} className="shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-[var(--color-text-primary)] leading-tight truncate">
+                    {roastery.name}
+                  </h3>
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    {roastery.city}
+                  </span>
+                </div>
               </div>
               <div className="space-y-2">
                 {roastery.beans.map(bean => {

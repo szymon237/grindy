@@ -1629,7 +1629,6 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
       className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-40
         bg-white/95 backdrop-blur-md border-t border-[var(--color-cream-dark)]
         safe-area-bottom"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       role="tablist"
       aria-label="Hauptnavigation"
     >

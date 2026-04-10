@@ -32,6 +32,11 @@
 }
 
 /* Base styles */
+html {
+  /* Fills iOS safe areas (home indicator, notch) with nav-matching white */
+  background: rgba(255, 255, 255, 0.95);
+}
+
 body {
   font-family: var(--font-sans);
   color: var(--color-text-primary);
@@ -112,6 +117,12 @@ input[type="range"]::-moz-range-thumb {
 .recharts-polar-angle-axis-tick-value {
   font-size: 12px;
   fill: var(--color-text-secondary);
+}
+
+/* Safe area bottom padding — iOS home indicator */
+.safe-area-bottom {
+  padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.0–11.2 */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* Smooth page transitions */

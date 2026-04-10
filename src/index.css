@@ -49,7 +49,7 @@ body {
 #root {
   max-width: 430px;
   margin: 0 auto;
-  height: 100svh;
+  height: 100vh;
   background: var(--color-milk);
   position: relative;
   overflow: hidden;

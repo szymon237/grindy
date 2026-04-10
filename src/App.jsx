@@ -1790,7 +1790,7 @@ export default function App() {
   return (
     <PasswordGate>
       {/* Main content — scrollable */}
-      <main className="flex-1 overflow-y-auto overscroll-none">
+      <main className="flex-1 min-h-0 overflow-y-auto overscroll-none">
         {/* First use hint — non-blocking */}
         {state.firstUse && state.collection.length === 0 && (
           <FirstUseHint onDismiss={() => dispatch({ type: 'DISMISS_FIRST_USE' })} />

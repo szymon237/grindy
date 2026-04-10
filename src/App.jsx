@@ -1726,7 +1726,7 @@ function PasswordGate({ children }) {
           Grindy
         </h1>
         <p className="text-sm text-[var(--color-text-muted)] mb-8">
-          Passwort eingeben
+          Bitte Passwort eingeben
         </p>
         <input
           type="password"

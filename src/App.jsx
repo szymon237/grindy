@@ -451,7 +451,7 @@ function EmptyCollection({ onAdd }) {
 // ──────────────────────────────────────────────
 
 function BeanCard({ collectionItem, onClick }) {
-  const { bean, recipes } = collectionItem;
+  const { bean, recipes, rating } = collectionItem;
   const [activeTab, setActiveTab] = useState('double');
 
   const activeRecipe = activeTab === 'double' ? (recipes?.double || {}) : (recipes?.single || {});
@@ -480,9 +480,27 @@ function BeanCard({ collectionItem, onClick }) {
             style={{ fontFamily: 'var(--font-display)' }}>
             {bean.name}
           </p>
-          <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5 truncate">
-            {bean.roastery}
-          </p>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <p className="text-[10px] text-[var(--color-text-muted)] truncate">
+              {bean.roastery}
+            </p>
+            {rating > 0 && (
+              <div className="flex items-center gap-0.5 shrink-0">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <Star
+                    key={s}
+                    size={9}
+                    className={rating >= s
+                      ? 'fill-[var(--color-caramel)] text-[var(--color-caramel)]'
+                      : rating >= s - 0.5
+                        ? 'text-[var(--color-caramel)]'
+                        : 'fill-[var(--color-cream-dark)] text-[var(--color-cream-dark)]'
+                    }
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div
           className="w-2.5 h-2.5 rounded-full shrink-0"

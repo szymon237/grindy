@@ -460,85 +460,118 @@ function EmptyCollection({ onDiscover, onAdd }) {
 // ──────────────────────────────────────────────
 
 function BeanCard({ collectionItem, onClick }) {
-  const { bean, rating, flavorNotes, tasteProfile } = collectionItem;
+  const { bean, rating, recipes } = collectionItem;
   const hasRating = rating !== null && rating > 0;
-  const hasTaste = Object.values(tasteProfile).some(v => v > 0);
-  const isComplete = hasRating && hasTaste && flavorNotes.length > 0;
+  const [activeTab, setActiveTab] = useState('double');
 
-  // Partial State: Zeigarnik Effect — visually indicate incomplete, invite completion
-  const completionPercent = [
-    hasRating ? 1 : 0,
-    hasTaste ? 1 : 0,
-    flavorNotes.length > 0 ? 1 : 0,
-  ].reduce((a, b) => a + b, 0) / 3 * 100;
+  const singleRecipe = recipes?.single || {};
+  const doubleRecipe = recipes?.double || {};
+  const activeRecipe = activeTab === 'double' ? doubleRecipe : singleRecipe;
+
+  const roastLevel = ROAST_LEVELS.find(r => r.id === bean.roast) || ROAST_LEVELS[2];
+  const rc = roastLevel.color;
+
+  const ratio = activeRecipe.dose && activeRecipe.yield
+    ? (activeRecipe.yield / activeRecipe.dose).toFixed(1)
+    : null;
+
+  const stats = [
+    { key: 'Mahlgrad', value: activeRecipe.grind != null ? `${activeRecipe.grind % 1 === 0 ? activeRecipe.grind : activeRecipe.grind.toFixed(1)}` : '–' },
+    { key: 'Dosis', value: activeRecipe.dose != null ? `${activeRecipe.dose}g` : '–' },
+    { key: 'Ertrag', value: activeRecipe.yield != null ? `${activeRecipe.yield}g` : '–' },
+    { key: 'Ratio', value: ratio ? `1:${ratio}` : '–' },
+    { key: 'Zeit', value: activeRecipe.time != null ? `${activeRecipe.time}s` : '–' },
+  ];
 
   return (
-    <button
-      onClick={onClick}
-      className="w-full text-left bg-white rounded-2xl p-4 shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)]
-        hover:shadow-[0_2px_8px_rgba(0,0,0,0.1),0_8px_24px_rgba(0,0,0,0.06)]
-        transition-shadow duration-200 group
-        focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2"
-      style={{ minHeight: 48 }}
+    <div
+      className="w-full text-left bg-white rounded-2xl overflow-hidden
+        shadow-[0_1px_3px_rgba(0,0,0,0.04)]
+        transition-shadow duration-200"
+      style={{ border: '1px solid #E8E8E8' }}
     >
-      {/* Serial Position Effect: Wichtigste Info (Rösterei, Rating) oben */}
-      <div className="flex items-start justify-between mb-1">
-        <span className="text-xs font-semibold text-[var(--color-caramel)] uppercase tracking-wide">
-          {bean.roastery}
-        </span>
-        {hasRating && <StarRating rating={rating} size="xs" />}
-      </div>
-
-      <h3 className="text-base font-semibold text-[var(--color-text-primary)] mb-1 leading-tight"
-        style={{ fontFamily: 'var(--font-display)' }}>
-        {bean.name}
-      </h3>
-
-      <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)] mb-3">
-        <span>{COUNTRY_FLAGS[bean.origin] || '🌍'} {bean.origin}</span>
-        <span className="text-[var(--color-cream-dark)]">·</span>
-        <span className="capitalize">{PROCESSING_METHODS.find(p => p.id === bean.processing)?.label || bean.processing}</span>
-      </div>
-
-      <div className="flex items-center justify-between">
-        <RoastIndicator roast={bean.roast} />
-        {!isComplete && (
-          // Zeigarnik: show progress bar for incomplete items
-          <div className="flex items-center gap-2">
-            <div className="w-12 h-1.5 rounded-full bg-[var(--color-cream-dark)] overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[var(--color-gold)] transition-all duration-500"
-                style={{ width: `${completionPercent}%` }}
-              />
-            </div>
-            <span className="text-[10px] text-[var(--color-text-muted)]">
-              {Math.round(completionPercent)}%
-            </span>
+      {/* Header — tappable, navigates to detail */}
+      <div
+        onClick={onClick}
+        className="p-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors duration-100"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter') onClick(); }}
+      >
+        <div className="flex items-center gap-3">
+          <RoasteryLogo name={bean.roastery} size={36} className="shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider leading-none">
+              {bean.roastery}
+            </p>
+            <h3 className="text-[15px] font-semibold text-[var(--color-text-primary)] leading-snug truncate mt-0.5"
+              style={{ fontFamily: 'var(--font-display)' }}>
+              {bean.name}
+            </h3>
           </div>
-        )}
-        {isComplete && (
-          <span className="text-xs text-[var(--color-success)] flex items-center gap-1">
-            <Check size={12} />
-            Komplett
-          </span>
-        )}
-      </div>
+          <div
+            className="w-3 h-3 rounded-full shrink-0"
+            style={{ backgroundColor: rc }}
+            title={roastLevel.label}
+          />
+        </div>
 
-      {flavorNotes.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {flavorNotes.slice(0, 3).map(note => (
-            <span key={note} className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-cream)] text-[var(--color-text-secondary)]">
-              {note}
-            </span>
-          ))}
-          {flavorNotes.length > 3 && (
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--color-cream)] text-[var(--color-text-muted)]">
-              +{flavorNotes.length - 3}
-            </span>
+        <div className="flex items-center gap-1.5 text-[10px] text-[var(--color-text-muted)] mt-2 ml-[48px]">
+          <span>{bean.origin}</span>
+          <span className="opacity-30">/</span>
+          <span className="capitalize">{PROCESSING_METHODS.find(p => p.id === bean.processing)?.label || bean.processing}</span>
+          <span className="opacity-30">/</span>
+          <span>{roastLevel.label}</span>
+          {hasRating && (
+            <>
+              <span className="opacity-30">/</span>
+              <StarRating rating={rating} size="xs" />
+            </>
           )}
         </div>
-      )}
-    </button>
+      </div>
+
+      {/* Recipe section — eigene Interaktionszone */}
+      <div className="border-t border-[#F0F0F0] px-4 py-3">
+        {/* Tab switcher — minimal */}
+        <div className="flex gap-3 mb-3">
+          {[
+            { id: 'double', label: 'Double' },
+            { id: 'single', label: 'Single' },
+          ].map(tab => (
+            <div
+              key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              onClick={(e) => { e.stopPropagation(); setActiveTab(tab.id); }}
+              className="cursor-pointer text-[11px] tracking-wide transition-colors duration-100"
+              style={{
+                color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                fontWeight: activeTab === tab.id ? 600 : 400,
+                borderBottom: activeTab === tab.id ? `1.5px solid ${rc}` : '1.5px solid transparent',
+                paddingBottom: 2,
+              }}
+            >
+              {tab.label}
+            </div>
+          ))}
+        </div>
+
+        {/* Stats — horizontal row */}
+        <div className="flex justify-between">
+          {stats.map(stat => (
+            <div key={stat.key} className="text-center">
+              <div className="text-[13px] font-semibold text-[var(--color-text-primary)] tabular-nums leading-none">
+                {stat.value}
+              </div>
+              <div className="text-[9px] text-[var(--color-text-muted)] mt-1">
+                {stat.key}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 

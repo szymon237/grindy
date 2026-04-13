@@ -19,6 +19,32 @@ export const GRINDER = {
   step: 0.5, // stepless, but 0.5 increments are practical
 };
 
+// Roastery brand colors — sourced from each roastery's website CSS/branding
+export const ROASTERY_COLORS = {
+  'The Barn':              '#A67C52', // warm bronze — thebarn.de --color-button
+  'Bonanza Coffee':        '#293E3A', // deep forest green — bonanzacoffee.de --color-button
+  'Five Elephant':         '#AB8C52', // warm gold — fiveelephant.com --COLOR-PRIMARY
+  'Father Carpenter':      '#2A3E6F', // navy blue — fathercarpenter.com --color-primary-accent
+  'Röststätte':            '#4A6741', // sage green — roeststaette.de
+  'Coffee Circle':         '#0F59A6', // medium blue — coffeecircle.com --mantine-color-cta-6
+  '19grams':               '#20124D', // deep purple — 19grams.coffee --leat-primary-color
+  'Flying Roasters':       '#E63946', // red — flyingroasters.de
+  'Elbgold':               '#C9A84C', // gold — elbgold.com (name = "Elbe Gold")
+  'Public Coffee Roasters':'#32373C', // dark charcoal — publiccoffeeroasters.com
+  'Nord Coast Coffee':     '#1B4965', // maritime blue — nordcoast.coffee
+  'Quijote Kaffee':        '#008490', // teal — quijote-kaffee.de
+  'SCHVARZ':               '#EF963F', // warm amber — schvarz.com --accent
+  'RVTC':                  '#8B2252', // burgundy — rvtc.de
+  'Carl Ferdinand':        '#5B7553', // olive green — carlferdinand.de
+  'Röstzeit':              '#8B6914', // dark gold — roestzeit.de
+  'Hoppenworth & Ploch':   '#2C5F2D', // forest green — hoppenworth-ploch.de
+  'Machhorndl':            '#C17817', // amber — machhorndl.de
+  'Heilandt':              '#ED6D05', // vibrant orange — heilandt.de --color-button
+  'Martermühle':           '#012B6A', // deep blue — martermuehle.de --color-base-accent
+  'Supremo':               '#6B3A2A', // warm brown — supremo.de
+  'Cross Coffee':          '#C3A759', // warm gold — crosscoffee.de
+};
+
 // Drink types — Rocket Appartamento + Niche Zero
 // Single: 11g bottomless | Double: 18g spouted | Café Crème: 16g
 export const DRINK_TYPES = [

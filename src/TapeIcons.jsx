@@ -94,6 +94,21 @@ export function TapePlus({ size = 24, strokeWidth = 2.5, className = '', ...prop
   );
 }
 
+export function TapeSettings({ size = 24, strokeWidth = 2.5, className = '', ...props }) {
+  const sw = strokeWidth > 2.2 ? 3.2 : 2.7;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" {...TAPE} className={className} {...props}>
+      <path d="M4 7.2 L20 6.8" strokeWidth={sw} />
+      <path d="M4 12.2 L20 11.8" strokeWidth={sw} />
+      <path d="M4 17.2 L20 16.8" strokeWidth={sw} />
+      <circle cx="15" cy="7" r="2" strokeWidth={sw - 0.5} fill="currentColor" />
+      <circle cx="9" cy="12" r="2" strokeWidth={sw - 0.5} fill="currentColor" />
+      <circle cx="16" cy="17" r="2" strokeWidth={sw - 0.5} fill="currentColor" />
+    </svg>
+  );
+}
+
 // ── Roastery Monogram Marks ────────────────────
 
 const ROASTERY_INITIALS = {

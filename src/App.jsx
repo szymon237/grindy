@@ -4,9 +4,9 @@ import {
   MapPin, Mountain, Layers, Droplets, ArrowRight,
   Flame, Filter, CoffeeIcon, SlidersHorizontal, Pen,
   Undo2, AlertCircle, Sparkles, ChevronDown, ChevronUp,
-  Timer, Weight, GlassWater, CircleDot,
+  Timer, Weight, GlassWater, CircleDot, Navigation2, Locate, Compass,
 } from 'lucide-react';
-import { TapeCoffee, TapeSearch, TapePlus, CupShowcase, TapeCup1, TapeCup2, TapeCup3, TapeCup4, TapeCup5, RoasteryLogo } from './TapeIcons';
+import { TapeCoffee, TapeSearch, TapePlus, TapeSettings, CupShowcase, TapeCup1, TapeCup2, TapeCup3, TapeCup4, TapeCup5, RoasteryLogo } from './TapeIcons';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer,
 } from 'recharts';
@@ -14,7 +14,10 @@ import {
   COFFEE_DATABASE, FLAVOR_NOTES, INITIAL_VISIBLE_TAGS,
   DRINK_TYPES, GRINDER, ROAST_LEVELS, PROCESSING_METHODS,
   COUNTRY_FLAGS, getRoasteriesGrouped, getRecipeDefaults,
+  LOCATIONS, distanceBetween, bearingBetween,
 } from './data/coffeeDatabase';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 // ──────────────────────────────────────────────
 // localStorage Persistence
@@ -74,7 +77,7 @@ const persisted = loadPersistedState();
 
 const initialState = {
   // Navigation
-  activeTab: 'collection', // collection | discover | add
+  activeTab: 'collection', // collection | discover | settings
   currentView: 'list',     // list | detail | addManual
   selectedBeanId: null,
   previousTab: null,
@@ -187,7 +190,7 @@ function reducer(state, action) {
     case 'START_ADD_MANUAL':
       return {
         ...state,
-        activeTab: 'add',
+        previousTab: state.activeTab,
         currentView: 'addManual',
         addStep: 0,
         addDraft: {
@@ -417,40 +420,28 @@ function Toast({ toast, onDismiss, onUndo }) {
   );
 }
 
-function EmptyCollection({ onDiscover, onAdd }) {
-  // Empty State: Zeigarnik Effect — motivate completion
+function EmptyCollection({ onAdd }) {
   return (
     <div className="flex flex-col items-center justify-center px-8 py-16 text-center">
       <div className="w-20 h-20 rounded-full bg-[var(--color-cream)] flex items-center justify-center mb-6">
         <TapeCup2 size={36} className="text-[var(--color-caramel)]" />
       </div>
-      <h2 className="font-[var(--font-display)] text-2xl text-[var(--color-text-primary)] mb-2"
+      <h2 className="text-2xl text-[var(--color-text-primary)] mb-2"
         style={{ fontFamily: 'var(--font-display)' }}>
         Deine Sammlung ist leer
       </h2>
       <p className="text-[var(--color-text-muted)] text-sm mb-8 max-w-[260px]">
-        Entdecke Specialty Coffee aus ganz Deutschland und starte deine persönliche Kollektion.
+        Füge deine erste Bohne hinzu — aus der Datenbank oder manuell.
       </p>
-      <div className="flex flex-col gap-3 w-full max-w-[240px]">
-        <button
-          onClick={onDiscover}
-          className="w-full py-3 px-6 bg-[var(--color-caramel)] text-white rounded-xl font-semibold text-sm
-            hover:bg-[var(--color-roast-light)] transition-colors
-            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2"
-          style={{ minHeight: 48 }}
-        >
-          Bohnen entdecken
-        </button>
-        <button
-          onClick={onAdd}
-          className="w-full py-3 px-6 bg-transparent border-2 border-[var(--color-cream-dark)] text-[var(--color-text-secondary)]
-            rounded-xl font-semibold text-sm hover:border-[var(--color-copper)] transition-colors
-            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2"
-          style={{ minHeight: 48 }}
-        >
-          Eigene Bohne anlegen
-        </button>
-      </div>
+      <button
+        onClick={onAdd}
+        className="py-3 px-8 bg-[var(--color-caramel)] text-white rounded-xl font-semibold text-sm
+          hover:bg-[var(--color-roast-light)] transition-colors
+          focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2"
+        style={{ minHeight: 48 }}
+      >
+        Bohne hinzufügen
+      </button>
     </div>
   );
 }
@@ -460,115 +451,77 @@ function EmptyCollection({ onDiscover, onAdd }) {
 // ──────────────────────────────────────────────
 
 function BeanCard({ collectionItem, onClick }) {
-  const { bean, rating, recipes } = collectionItem;
-  const hasRating = rating !== null && rating > 0;
+  const { bean, recipes } = collectionItem;
   const [activeTab, setActiveTab] = useState('double');
 
-  const singleRecipe = recipes?.single || {};
-  const doubleRecipe = recipes?.double || {};
-  const activeRecipe = activeTab === 'double' ? doubleRecipe : singleRecipe;
-
+  const activeRecipe = activeTab === 'double' ? (recipes?.double || {}) : (recipes?.single || {});
   const roastLevel = ROAST_LEVELS.find(r => r.id === bean.roast) || ROAST_LEVELS[2];
   const rc = roastLevel.color;
-
   const ratio = activeRecipe.dose && activeRecipe.yield
     ? (activeRecipe.yield / activeRecipe.dose).toFixed(1)
     : null;
 
-  const stats = [
-    { key: 'Mahlgrad', value: activeRecipe.grind != null ? `${activeRecipe.grind % 1 === 0 ? activeRecipe.grind : activeRecipe.grind.toFixed(1)}` : '–' },
-    { key: 'Dosis', value: activeRecipe.dose != null ? `${activeRecipe.dose}g` : '–' },
-    { key: 'Ertrag', value: activeRecipe.yield != null ? `${activeRecipe.yield}g` : '–' },
-    { key: 'Ratio', value: ratio ? `1:${ratio}` : '–' },
-    { key: 'Zeit', value: activeRecipe.time != null ? `${activeRecipe.time}s` : '–' },
-  ];
-
   return (
     <div
-      className="w-full text-left bg-white rounded-2xl overflow-hidden
-        shadow-[0_1px_3px_rgba(0,0,0,0.04)]
-        transition-shadow duration-200"
-      style={{ border: '1px solid #E8E8E8' }}
+      className="w-full bg-white rounded-xl overflow-hidden"
+      style={{ border: '1px solid #EBEBEB' }}
     >
-      {/* Header — tappable, navigates to detail */}
+      {/* Header — navigiert zur Detail-Ansicht */}
       <div
         onClick={onClick}
-        className="p-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors duration-100"
+        className="flex items-center gap-3 px-3.5 py-3 cursor-pointer hover:bg-[#FAFAFA] transition-colors duration-100"
         role="button"
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter') onClick(); }}
       >
-        <div className="flex items-center gap-3">
-          <RoasteryLogo name={bean.roastery} size={36} className="shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider leading-none">
-              {bean.roastery}
-            </p>
-            <h3 className="text-[15px] font-semibold text-[var(--color-text-primary)] leading-snug truncate mt-0.5"
-              style={{ fontFamily: 'var(--font-display)' }}>
-              {bean.name}
-            </h3>
-          </div>
-          <div
-            className="w-3 h-3 rounded-full shrink-0"
-            style={{ backgroundColor: rc }}
-            title={roastLevel.label}
-          />
+        <RoasteryLogo name={bean.roastery} size={32} className="shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold text-[var(--color-text-primary)] leading-tight truncate"
+            style={{ fontFamily: 'var(--font-display)' }}>
+            {bean.name}
+          </p>
+          <p className="text-[10px] text-[var(--color-text-muted)] mt-0.5 truncate">
+            {bean.roastery}
+          </p>
         </div>
-
-        <div className="flex items-center gap-1.5 text-[10px] text-[var(--color-text-muted)] mt-2 ml-[48px]">
-          <span>{bean.origin}</span>
-          <span className="opacity-30">/</span>
-          <span className="capitalize">{PROCESSING_METHODS.find(p => p.id === bean.processing)?.label || bean.processing}</span>
-          <span className="opacity-30">/</span>
-          <span>{roastLevel.label}</span>
-          {hasRating && (
-            <>
-              <span className="opacity-30">/</span>
-              <StarRating rating={rating} size="xs" />
-            </>
-          )}
-        </div>
+        <div
+          className="w-2.5 h-2.5 rounded-full shrink-0"
+          style={{ backgroundColor: rc }}
+        />
       </div>
 
-      {/* Recipe section — eigene Interaktionszone */}
-      <div className="border-t border-[#F0F0F0] px-4 py-3">
-        {/* Tab switcher — minimal */}
-        <div className="flex gap-3 mb-3">
-          {[
-            { id: 'double', label: 'Double' },
-            { id: 'single', label: 'Single' },
-          ].map(tab => (
+      {/* Rezept — eine Zeile */}
+      <div className="flex items-center border-t border-[#F2F2F2] px-3.5 py-2">
+        {/* Toggle D / S — beide sichtbar, großes Touch-Target */}
+        <div className="flex shrink-0 mr-3">
+          {['double', 'single'].map(id => (
             <div
-              key={tab.id}
+              key={id}
               role="tab"
-              aria-selected={activeTab === tab.id}
-              onClick={(e) => { e.stopPropagation(); setActiveTab(tab.id); }}
-              className="cursor-pointer text-[11px] tracking-wide transition-colors duration-100"
-              style={{
-                color: activeTab === tab.id ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
-                fontWeight: activeTab === tab.id ? 600 : 400,
-                borderBottom: activeTab === tab.id ? `1.5px solid ${rc}` : '1.5px solid transparent',
-                paddingBottom: 2,
-              }}
+              aria-selected={activeTab === id}
+              onClick={() => setActiveTab(id)}
+              className="flex items-center justify-center cursor-pointer"
+              style={{ minHeight: 44, minWidth: 32 }}
             >
-              {tab.label}
+              <span
+                className="text-[11px] transition-colors duration-100"
+                style={{
+                  color: activeTab === id ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                  fontWeight: activeTab === id ? 600 : 400,
+                }}
+              >
+                {id === 'double' ? 'D' : 'S'}
+              </span>
             </div>
           ))}
         </div>
 
-        {/* Stats — horizontal row */}
-        <div className="flex justify-between">
-          {stats.map(stat => (
-            <div key={stat.key} className="text-center">
-              <div className="text-[13px] font-semibold text-[var(--color-text-primary)] tabular-nums leading-none">
-                {stat.value}
-              </div>
-              <div className="text-[9px] text-[var(--color-text-muted)] mt-1">
-                {stat.key}
-              </div>
-            </div>
-          ))}
+        {/* Werte inline */}
+        <div className="flex-1 flex items-baseline gap-3 text-[11px] tabular-nums overflow-hidden">
+          <span className="text-[var(--color-text-primary)] font-medium">{activeRecipe.grind != null ? activeRecipe.grind : '–'}</span>
+          <span className="text-[var(--color-text-muted)]">{activeRecipe.dose != null ? `${activeRecipe.dose}g` : '–'} → {activeRecipe.yield != null ? `${activeRecipe.yield}g` : '–'}</span>
+          {ratio && <span className="text-[var(--color-text-muted)]">1:{ratio}</span>}
+          <span className="text-[var(--color-text-muted)]">{activeRecipe.time != null ? `${activeRecipe.time}s` : '–'}</span>
         </div>
       </div>
     </div>
@@ -789,7 +742,6 @@ function CollectionView({ state, dispatch, showToast }) {
   if (collection.length === 0) {
     return (
       <EmptyCollection
-        onDiscover={() => dispatch({ type: 'NAVIGATE_TAB', tab: 'discover' })}
         onAdd={() => dispatch({ type: 'START_ADD_MANUAL' })}
       />
     );
@@ -819,6 +771,19 @@ function CollectionView({ state, dispatch, showToast }) {
           />
         ))}
       </div>
+
+      {/* Bohne hinzufügen */}
+      <button
+        onClick={() => dispatch({ type: 'START_ADD_MANUAL' })}
+        className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl
+          border border-dashed border-[#D0D0D0] text-[var(--color-text-muted)]
+          hover:border-[#AAA] hover:text-[var(--color-text-secondary)] transition-colors
+          focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
+        style={{ minHeight: 48 }}
+      >
+        <Plus size={16} />
+        <span className="text-[12px] font-medium">Bohne hinzufügen</span>
+      </button>
     </div>
   );
 }
@@ -827,161 +792,480 @@ function CollectionView({ state, dispatch, showToast }) {
 // Discover View (Datenbank)
 // ──────────────────────────────────────────────
 
-function DiscoverView({ state, dispatch, showToast }) {
-  const { searchQuery, collection } = state;
-  const groupedRoasteries = useMemo(() => getRoasteriesGrouped(), []);
+// ── Leaflet Map Hook ──────────────────────────
 
-  const filteredGrouped = useMemo(() => {
-    if (!searchQuery.trim()) return groupedRoasteries;
-    const q = searchQuery.toLowerCase();
-    const result = {};
-    Object.entries(groupedRoasteries).forEach(([letter, roasteries]) => {
-      const filtered = roasteries
-        .map(r => ({
-          ...r,
-          beans: r.beans.filter(b =>
-            b.name.toLowerCase().includes(q) ||
-            b.roastery.toLowerCase().includes(q) ||
-            b.origin.toLowerCase().includes(q) ||
-            b.region.toLowerCase().includes(q)
-          ),
-        }))
-        .filter(r => r.beans.length > 0);
-      if (filtered.length > 0) result[letter] = filtered;
+function useLeafletMap(containerRef, center, zoom) {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current || mapRef.current) return;
+    const map = L.map(containerRef.current, {
+      center,
+      zoom,
+      zoomControl: false,
+      attributionControl: false,
     });
-    return result;
-  }, [searchQuery, groupedRoasteries]);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+    mapRef.current = map;
 
-  const letters = Object.keys(filteredGrouped).sort((a, b) => a.localeCompare(b, 'de'));
-  const hasResults = letters.length > 0;
-  const collectionBeanIds = new Set(collection.map(c => c.beanId));
+    // Leaflet needs invalidateSize when container becomes visible (tab switch)
+    setTimeout(() => map.invalidateSize(), 100);
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []); // mount once
+
+  return mapRef;
+}
+
+// ── Geolocation Hook ──────────────────────────
+
+function useGeolocation() {
+  const [position, setPosition] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const watchRef = useRef(null);
+
+  const request = useCallback(() => {
+    if (!navigator.geolocation) {
+      setError('Geolocation nicht unterstützt');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+
+    // Get initial position fast
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.code === 1 ? 'Standortzugriff verweigert' : 'Standort nicht verfügbar');
+        setLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+
+    // Then watch for updates
+    if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+    watchRef.current = navigator.geolocation.watchPosition(
+      (pos) => setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {},
+      { enableHighAccuracy: true }
+    );
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (watchRef.current) navigator.geolocation.clearWatch(watchRef.current);
+    };
+  }, []);
+
+  return { position, error, loading, request };
+}
+
+// ── Device Heading Hook (for compass) ─────────
+
+function useDeviceHeading() {
+  const [heading, setHeading] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      // iOS: webkitCompassHeading, Android: alpha
+      const h = e.webkitCompassHeading ?? (e.alpha != null ? (360 - e.alpha) : null);
+      if (h != null) setHeading(h);
+    };
+
+    // iOS 13+ requires permission
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(perm => { if (perm === 'granted') window.addEventListener('deviceorientation', handler, true); })
+        .catch(() => {});
+    } else {
+      window.addEventListener('deviceorientation', handler, true);
+    }
+
+    return () => window.removeEventListener('deviceorientation', handler, true);
+  }, []);
+
+  return heading;
+}
+
+// ── Format distance ───────────────────────────
+
+function formatDistance(meters) {
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
+// ── Custom Map Pin (SVG as Leaflet divIcon) ───
+
+function createMapPin(type, isNearest) {
+  const color = type === 'roastery' ? '#000' : '#666';
+  const size = isNearest ? 36 : 28;
+  const html = `<svg width="${size}" height="${size + 8}" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 34C14 34 26 20.5 26 13C26 6.4 20.6 1 14 1C7.4 1 2 6.4 2 13C2 20.5 14 34 14 34Z" fill="${color}" stroke="white" stroke-width="2"/>
+    <circle cx="14" cy="13" r="5" fill="white"/>
+  </svg>`;
+  return L.divIcon({
+    html,
+    className: '',
+    iconSize: [size, size + 8],
+    iconAnchor: [size / 2, size + 8],
+  });
+}
+
+// ── Compass Card ──────────────────────────────
+
+function CompassCard({ target, userPos, heading, onClose }) {
+  const dist = distanceBetween(userPos.lat, userPos.lng, target.lat, target.lng);
+  const bearing = bearingBetween(userPos.lat, userPos.lng, target.lat, target.lng);
+  // Rotation: bearing relative to device heading (or north if no heading)
+  const rotation = heading != null ? bearing - heading : bearing;
 
   return (
-    <div className="px-4 pt-4 pb-4">
-      <h1 className="text-2xl font-semibold mb-4" style={{ fontFamily: 'var(--font-display)' }}>
-        Entdecken
-      </h1>
+    <div style={{
+      position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000,
+      background: 'rgba(255,255,255,0.97)', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', padding: 24,
+    }}>
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-[var(--color-cream)]"
+        style={{ minWidth: 44, minHeight: 44 }}
+      >
+        <X size={20} />
+      </button>
 
-      {/* Search — Recognition over Recall */}
-      <div className="relative mb-5">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={e => dispatch({ type: 'SET_SEARCH', query: e.target.value })}
-          placeholder="Rösterei, Bohne oder Herkunft suchen..."
-          className="w-full pl-10 pr-10 py-3 bg-[var(--color-cream)] rounded-xl text-sm
-            placeholder:text-[var(--color-text-muted)]
-            focus:outline-none focus:ring-2 focus:ring-[var(--color-caramel)] focus:bg-white transition-colors"
-          style={{ minHeight: 48 }}
-        />
-        {searchQuery && (
+      <p className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest mb-2">
+        Nächste {target.type === 'roastery' ? 'Rösterei' : 'Café'}
+      </p>
+      <h2 className="text-xl font-bold mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+        {target.name}
+      </h2>
+      <p className="text-sm text-[var(--color-text-secondary)] mb-8">{target.address}</p>
+
+      {/* Compass ring */}
+      <div style={{
+        width: 200, height: 200, borderRadius: '50%',
+        border: '3px solid #E5E5E5', position: 'relative',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginBottom: 24,
+      }}>
+        {/* N/S/E/W labels */}
+        <span className="absolute text-[10px] font-bold text-[var(--color-text-muted)]" style={{ top: 8 }}>N</span>
+        <span className="absolute text-[10px] font-bold text-[var(--color-text-muted)]" style={{ bottom: 8 }}>S</span>
+        <span className="absolute text-[10px] font-bold text-[var(--color-text-muted)]" style={{ right: 8 }}>E</span>
+        <span className="absolute text-[10px] font-bold text-[var(--color-text-muted)]" style={{ left: 8 }}>W</span>
+
+        {/* Direction arrow */}
+        <div style={{
+          transform: `rotate(${rotation}deg)`,
+          transition: 'transform 0.3s ease-out',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+        }}>
+          <Navigation2 size={48} strokeWidth={2.5} style={{ marginBottom: -4 }} />
+        </div>
+      </div>
+
+      <p className="text-4xl font-bold mb-1" style={{ fontFamily: 'var(--font-display)' }}>
+        {formatDistance(dist)}
+      </p>
+      <p className="text-sm text-[var(--color-text-muted)]">
+        {heading == null ? 'Kompass nicht verfügbar — Richtung ab Norden' : 'Drehe dein Gerät in Pfeilrichtung'}
+      </p>
+    </div>
+  );
+}
+
+// ── DiscoverView — Map-based Discovery ────────
+
+function DiscoverView({ state, dispatch, showToast }) {
+  const mapContainerRef = useRef(null);
+  const mapRef = useLeafletMap(mapContainerRef, [51.2250, 6.7850], 13);
+  const geo = useGeolocation();
+  const heading = useDeviceHeading();
+  const markersRef = useRef([]);
+  const userMarkerRef = useRef(null);
+  const [compassTarget, setCompassTarget] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showList, setShowList] = useState(false);
+
+  // Sort locations by distance when position is available
+  const sortedLocations = useMemo(() => {
+    if (!geo.position) return LOCATIONS;
+    return [...LOCATIONS]
+      .map(loc => ({ ...loc, distance: distanceBetween(geo.position.lat, geo.position.lng, loc.lat, loc.lng) }))
+      .sort((a, b) => a.distance - b.distance);
+  }, [geo.position]);
+
+  const nearest = sortedLocations[0];
+
+  // Add location markers to map
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    // Clear old markers
+    markersRef.current.forEach(m => m.remove());
+    markersRef.current = [];
+
+    LOCATIONS.forEach(loc => {
+      const isNearest = geo.position && nearest && loc.name === nearest.name;
+      const marker = L.marker([loc.lat, loc.lng], {
+        icon: createMapPin(loc.type, isNearest),
+      }).addTo(map);
+
+      marker.on('click', () => setSelectedLocation(loc));
+
+      // Tooltip with name
+      marker.bindTooltip(loc.name, {
+        direction: 'top',
+        offset: [0, -30],
+        className: 'leaflet-tooltip-custom',
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [mapRef.current, nearest?.name]);
+
+  // Update user position marker
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !geo.position) return;
+
+    if (userMarkerRef.current) {
+      userMarkerRef.current.setLatLng([geo.position.lat, geo.position.lng]);
+    } else {
+      const pulseHtml = `<div style="
+        width: 16px; height: 16px; background: #4A90D9; border: 3px solid white;
+        border-radius: 50%; box-shadow: 0 0 0 4px rgba(74,144,217,0.3);
+      "></div>`;
+      userMarkerRef.current = L.marker([geo.position.lat, geo.position.lng], {
+        icon: L.divIcon({ html: pulseHtml, className: '', iconSize: [22, 22], iconAnchor: [11, 11] }),
+        zIndexOffset: 1000,
+      }).addTo(map);
+
+      // Pan to user
+      map.setView([geo.position.lat, geo.position.lng], 14, { animate: true });
+    }
+  }, [geo.position]);
+
+  return (
+    <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* Map */}
+      <div ref={mapContainerRef} style={{ flex: 1, minHeight: 0 }} />
+
+      {/* Top bar — overlaid on map */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 500,
+        padding: '12px 16px', display: 'flex', gap: 8,
+        background: 'linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0))',
+        paddingBottom: 32,
+      }}>
+        <h1 className="text-lg font-bold flex-1" style={{ fontFamily: 'var(--font-display)' }}>
+          Entdecken
+        </h1>
+      </div>
+
+      {/* Map controls — right side */}
+      <div style={{
+        position: 'absolute', top: 56, right: 12, zIndex: 500,
+        display: 'flex', flexDirection: 'column', gap: 8,
+      }}>
+        {/* Locate me */}
+        <button
+          onClick={() => {
+            if (geo.position && mapRef.current) {
+              mapRef.current.setView([geo.position.lat, geo.position.lng], 15, { animate: true });
+            } else {
+              geo.request();
+            }
+          }}
+          className="w-10 h-10 bg-white rounded-xl shadow-md flex items-center justify-center"
+          style={{ minWidth: 44, minHeight: 44 }}
+          aria-label="Mein Standort"
+        >
+          <Locate size={20} className={geo.position ? 'text-[#4A90D9]' : 'text-[var(--color-text-muted)]'} />
+        </button>
+      </div>
+
+      {/* Bottom sheet — location list + compass shortcut */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 500,
+        background: 'white', borderRadius: '16px 16px 0 0',
+        boxShadow: '0 -4px 24px rgba(0,0,0,0.1)',
+        maxHeight: showList ? '60%' : 'auto',
+        transition: 'max-height 0.3s ease',
+        overflow: 'hidden',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {/* Handle + toggle */}
+        <button
+          onClick={() => setShowList(!showList)}
+          className="w-full flex flex-col items-center pt-2 pb-3 px-4"
+          style={{ minHeight: 44 }}
+        >
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDD', marginBottom: 8 }} />
+          {!geo.position ? (
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-[var(--color-text-muted)]" />
+              <span className="text-sm text-[var(--color-text-secondary)]">
+                {LOCATIONS.filter(l => l.city === 'Düsseldorf').length} Orte in Düsseldorf
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <MapPin size={16} />
+              <span className="text-sm font-medium">
+                {sortedLocations.length} Orte in der Nähe
+              </span>
+              {nearest?.distance != null && (
+                <span className="text-xs text-[var(--color-text-muted)]">
+                  · Nächste: {formatDistance(nearest.distance)}
+                </span>
+              )}
+            </div>
+          )}
+        </button>
+
+        {/* Compass shortcut — only when position is known */}
+        {geo.position && nearest && (
           <button
-            onClick={() => dispatch({ type: 'SET_SEARCH', query: '' })}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]
-              hover:text-[var(--color-text-secondary)] p-1
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] rounded"
-            style={{ minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => setCompassTarget(nearest)}
+            className="mx-4 mb-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-black text-white"
+            style={{ minHeight: 48 }}
           >
-            <X size={16} />
+            <Compass size={20} />
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold">Zur nächsten Rösterei</p>
+              <p className="text-xs opacity-70">{nearest.name} · {formatDistance(nearest.distance)}</p>
+            </div>
+            <ArrowRight size={16} className="opacity-50" />
           </button>
+        )}
+
+        {/* Locate button — when no position yet */}
+        {!geo.position && (
+          <button
+            onClick={geo.request}
+            disabled={geo.loading}
+            className="mx-4 mb-3 flex items-center gap-3 px-4 py-3 rounded-xl bg-black text-white"
+            style={{ minHeight: 48 }}
+          >
+            <Locate size={20} />
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold">
+                {geo.loading ? 'Suche Standort...' : 'Standort teilen'}
+              </p>
+              <p className="text-xs opacity-70">Finde Röstereien in deiner Nähe</p>
+            </div>
+          </button>
+        )}
+
+        {geo.error && (
+          <p className="text-xs text-[var(--color-error)] px-4 pb-2">{geo.error}</p>
+        )}
+
+        {/* Scrollable location list */}
+        {showList && (
+          <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 8 }}>
+            {sortedLocations.map((loc) => (
+              <button
+                key={loc.name + loc.address}
+                onClick={() => {
+                  setSelectedLocation(loc);
+                  setShowList(false);
+                  if (mapRef.current) mapRef.current.setView([loc.lat, loc.lng], 16, { animate: true });
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[var(--color-cream)] transition-colors"
+                style={{ minHeight: 48 }}
+              >
+                <div className="w-8 h-8 rounded-lg bg-[var(--color-cream)] flex items-center justify-center shrink-0">
+                  {loc.type === 'roastery' ? (
+                    <Coffee size={16} />
+                  ) : (
+                    <MapPin size={16} className="text-[var(--color-text-secondary)]" />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{loc.name}</p>
+                  <p className="text-xs text-[var(--color-text-muted)] truncate">{loc.address}</p>
+                </div>
+                {loc.distance != null && (
+                  <span className="text-xs text-[var(--color-text-muted)] shrink-0">
+                    {formatDistance(loc.distance)}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Empty search state */}
-      {!hasResults && searchQuery && (
-        <div className="text-center py-12">
-          <Search size={40} className="mx-auto text-[var(--color-cream-dark)] mb-4" />
-          <p className="text-[var(--color-text-secondary)] font-medium mb-1">
-            Keine Ergebnisse für &ldquo;{searchQuery}&rdquo;
-          </p>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Probiere einen anderen Suchbegriff oder{' '}
+      {/* Selected location popup */}
+      {selectedLocation && (
+        <div style={{
+          position: 'absolute', bottom: geo.position ? 180 : 150, left: 16, right: 16, zIndex: 600,
+          background: 'white', borderRadius: 16, padding: 16,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+        }}>
+          <button
+            onClick={() => setSelectedLocation(null)}
+            className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--color-cream)]"
+            style={{ minWidth: 44, minHeight: 44 }}
+          >
+            <X size={16} />
+          </button>
+          <div className="flex items-start gap-3">
+            <RoasteryLogo name={selectedLocation.name} size={44} className="shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-bold leading-tight">{selectedLocation.name}</h3>
+              <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{selectedLocation.address}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-cream)]">
+                  {selectedLocation.type === 'roastery' ? 'Rösterei' : 'Café'}
+                </span>
+                {selectedLocation.sellsBeans && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-cream)]">
+                    Bohnen kaufen
+                  </span>
+                )}
+                {selectedLocation.distance != null && (
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    {formatDistance(selectedLocation.distance)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          {geo.position && (
             <button
-              onClick={() => dispatch({ type: 'START_ADD_MANUAL' })}
-              className="text-[var(--color-caramel)] underline focus:outline-none"
+              onClick={() => { setCompassTarget(selectedLocation); setSelectedLocation(null); }}
+              className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-black text-white text-sm font-medium"
+              style={{ minHeight: 44 }}
             >
-              lege eine eigene Bohne an
+              <Compass size={16} />
+              Wegweiser starten
             </button>
-          </p>
+          )}
         </div>
       )}
 
-      {/* Miller's Law: alphabetisch gruppiert mit Sticky-Headers */}
-      {letters.map(letter => (
-        <div key={letter} className="mb-4">
-          <div className="sticky top-0 z-10 bg-[var(--color-milk)]/95 backdrop-blur-sm py-1 mb-2">
-            <span className="text-xs font-bold text-[var(--color-caramel)] uppercase tracking-widest">
-              {letter}
-            </span>
-          </div>
-          {filteredGrouped[letter].map(roastery => (
-            <div key={roastery.name} className="mb-5">
-              <div className="flex items-center gap-3 mb-3">
-                <RoasteryLogo name={roastery.name} size={48} className="shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="text-base font-bold text-[var(--color-text-primary)] leading-tight truncate">
-                    {roastery.name}
-                  </h3>
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    {roastery.city}
-                  </span>
-                </div>
-              </div>
-              <div className="space-y-2">
-                {roastery.beans.map(bean => {
-                  const inCollection = collectionBeanIds.has(bean.id);
-                  return (
-                    <div
-                      key={bean.id}
-                      className="flex items-center justify-between bg-white rounded-xl px-3 py-3
-                        shadow-[0_1px_3px_rgba(0,0,0,0.04)]"
-                    >
-                      <button
-                        onClick={() => dispatch({ type: 'VIEW_BEAN_DETAIL', beanId: bean.id })}
-                        className="flex-1 text-left mr-3 focus:outline-none focus-visible:ring-2
-                          focus-visible:ring-[var(--color-caramel)] rounded-lg p-1 -m-1"
-                        style={{ minHeight: 44 }}
-                      >
-                        <p className="text-sm font-medium text-[var(--color-text-primary)] leading-tight">
-                          {bean.name}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-[var(--color-text-muted)]">
-                            {COUNTRY_FLAGS[bean.origin] || '🌍'} {bean.origin}
-                          </span>
-                          <RoastIndicator roast={bean.roast} size="sm" />
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (inCollection) {
-                            dispatch({ type: 'REMOVE_FROM_COLLECTION', beanId: bean.id });
-                            showToast('Bohne entfernt', () => dispatch({ type: 'ADD_TO_COLLECTION', beanId: bean.id }));
-                          } else {
-                            dispatch({ type: 'ADD_TO_COLLECTION', beanId: bean.id });
-                            showToast('Zur Sammlung hinzugefügt', () => dispatch({ type: 'REMOVE_FROM_COLLECTION', beanId: bean.id }));
-                          }
-                        }}
-                        className={`shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all
-                          focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
-                          ${inCollection
-                            ? 'bg-[var(--color-success)] text-white'
-                            : 'bg-[var(--color-cream)] text-[var(--color-caramel)] hover:bg-[var(--color-cream-dark)]'
-                          }`}
-                        style={{ minWidth: 44, minHeight: 44 }}
-                        aria-label={inCollection ? 'Aus Sammlung entfernen' : 'Zur Sammlung hinzufügen'}
-                      >
-                        {inCollection ? <Check size={16} /> : <Plus size={16} />}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
+      {/* Compass overlay */}
+      {compassTarget && geo.position && (
+        <CompassCard
+          target={compassTarget}
+          userPos={geo.position}
+          heading={heading}
+          onClose={() => setCompassTarget(null)}
+        />
+      )}
     </div>
   );
 }
@@ -1332,100 +1616,62 @@ function InfoItem({ icon, label, value }) {
 }
 
 // ──────────────────────────────────────────────
-// Add View
+// Add Bean Flow — Search-to-Create
 // ──────────────────────────────────────────────
 
-function AddView({ state, dispatch, showToast }) {
-  if (state.currentView === 'addManual') {
-    return <AddManualFlow state={state} dispatch={dispatch} showToast={showToast} />;
-  }
+function AddBeanFlow({ state, dispatch, showToast }) {
+  const { addStep, addDraft, collection } = state;
+  const [query, setQuery] = useState('');
+  const inputRef = useRef(null);
 
-  return (
-    <div className="px-4 pt-4 pb-4">
-      <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'var(--font-display)' }}>
-        Bohne hinzufügen
-      </h1>
-      <p className="text-sm text-[var(--color-text-muted)] mb-8">
-        Wähle eine Bohne aus unserer Datenbank oder lege eine eigene an.
-      </p>
+  // Autocomplete: search roasteries + beans
+  const suggestions = useMemo(() => {
+    if (!query.trim() || query.length < 2) return [];
+    const q = query.toLowerCase();
+    return COFFEE_DATABASE.filter(b =>
+      b.roastery.toLowerCase().includes(q) ||
+      b.name.toLowerCase().includes(q) ||
+      b.origin.toLowerCase().includes(q)
+    ).slice(0, 8);
+  }, [query]);
 
-      {/* Two paths — Progressive Disclosure */}
-      <div className="space-y-3">
-        <button
-          onClick={() => dispatch({ type: 'NAVIGATE_TAB', tab: 'discover' })}
-          className="w-full bg-white rounded-2xl p-5 text-left flex items-center gap-4
-            shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]
-            transition-shadow
-            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
-          style={{ minHeight: 48 }}
-        >
-          <div className="w-12 h-12 rounded-full bg-[var(--color-cream)] flex items-center justify-center shrink-0">
-            <Search size={22} className="text-[var(--color-caramel)]" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Aus Datenbank wählen</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-              {COFFEE_DATABASE.length} Bohnen von {new Set(COFFEE_DATABASE.map(b => b.roastery)).size} Röstereien
-            </p>
-          </div>
-          <ArrowRight size={18} className="text-[var(--color-text-muted)] shrink-0" />
-        </button>
+  const alreadyInCollection = useCallback((beanId) =>
+    collection.some(c => c.beanId === beanId),
+  [collection]);
 
-        <button
-          onClick={() => dispatch({ type: 'START_ADD_MANUAL' })}
-          className="w-full bg-white rounded-2xl p-5 text-left flex items-center gap-4
-            shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]
-            transition-shadow
-            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
-          style={{ minHeight: 48 }}
-        >
-          <div className="w-12 h-12 rounded-full bg-[var(--color-cream)] flex items-center justify-center shrink-0">
-            <Pen size={22} className="text-[var(--color-caramel)]" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Eigene Bohne anlegen</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-              Rösterei, Bohne, Herkunft manuell eingeben
-            </p>
-          </div>
-          <ArrowRight size={18} className="text-[var(--color-text-muted)] shrink-0" />
-        </button>
-      </div>
-    </div>
-  );
-}
+  // Step 0: Search/Select, Step 1: Details (manual only), Step 2: Roast/Processing (manual only)
+  const isManual = addStep > 0;
 
-// ──────────────────────────────────────────────
-// Add Manual Flow — One-Thing-Per-Page
-// ──────────────────────────────────────────────
+  // Focus input on mount
+  useEffect(() => {
+    if (addStep === 0 && inputRef.current) inputRef.current.focus();
+  }, [addStep]);
 
-const ADD_STEPS = [
-  { title: 'Rösterei & Bohne', subtitle: 'Das Wichtigste zuerst' },
-  { title: 'Herkunft & Details', subtitle: 'Woher kommt die Bohne?' },
-  { title: 'Röstung & Verarbeitung', subtitle: 'Fast geschafft!' },
-];
+  const handleSelectBean = (bean) => {
+    if (alreadyInCollection(bean.id)) return;
+    dispatch({ type: 'ADD_TO_COLLECTION', beanId: bean.id });
+    showToast(`${bean.name} hinzugefügt`);
+    dispatch({ type: 'BACK_TO_LIST' });
+  };
 
-function AddManualFlow({ state, dispatch, showToast }) {
-  const { addStep, addDraft } = state;
+  const handleStartManual = () => {
+    // Prefill roastery from current query if it looks like one
+    dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roastery: query } });
+    dispatch({ type: 'SET_ADD_STEP', step: 1 });
+  };
+
   if (!addDraft) return null;
-
-  const step = ADD_STEPS[addStep];
-  const canProceed = addStep === 0
-    ? addDraft.roastery.trim() && addDraft.name.trim()
-    : true;
-
-  const isLastStep = addStep === ADD_STEPS.length - 1;
 
   return (
     <div className="px-4 pt-4 pb-4">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-5">
         <button
           onClick={() => {
-            if (addStep > 0) {
+            if (addStep > 1) {
               dispatch({ type: 'SET_ADD_STEP', step: addStep - 1 });
             } else {
-              dispatch({ type: 'NAVIGATE_TAB', tab: 'add' });
+              dispatch({ type: 'BACK_TO_LIST' });
             }
           }}
           className="w-10 h-10 rounded-full bg-[var(--color-cream)] flex items-center justify-center
@@ -1435,184 +1681,204 @@ function AddManualFlow({ state, dispatch, showToast }) {
         >
           <ChevronLeft size={20} />
         </button>
-        <div className="flex-1">
-          <p className="text-xs text-[var(--color-caramel)] font-semibold">
-            Schritt {addStep + 1} von {ADD_STEPS.length}
-          </p>
-          <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-display)' }}>
-            {step.title}
-          </h2>
-        </div>
+        <h2 className="text-lg font-semibold" style={{ fontFamily: 'var(--font-display)' }}>
+          {addStep === 0 ? 'Bohne hinzufügen' : addStep === 1 ? 'Details' : 'Röstung'}
+        </h2>
       </div>
 
-      {/* Step progress bar */}
-      <div className="flex gap-1.5 mb-8">
-        {ADD_STEPS.map((_, i) => (
-          <div
-            key={i}
-            className={`flex-1 h-1 rounded-full transition-colors duration-300 ${
-              i <= addStep ? 'bg-[var(--color-caramel)]' : 'bg-[var(--color-cream-dark)]'
-            }`}
+      {/* Step 0: Search + suggestions */}
+      {addStep === 0 && (
+        <>
+          <div className="relative mb-2">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Rösterei, Bohne oder Herkunft..."
+              className="w-full pl-10 pr-4 py-3 bg-[var(--color-cream)] rounded-xl text-sm
+                placeholder:text-[var(--color-text-muted)]
+                focus:outline-none focus:ring-2 focus:ring-[var(--color-caramel)] focus:bg-white transition-colors"
+              style={{ minHeight: 48 }}
+            />
+          </div>
+
+          {/* Suggestions from database */}
+          {suggestions.length > 0 && (
+            <div className="space-y-1 mb-4">
+              {suggestions.map(bean => {
+                const inCol = alreadyInCollection(bean.id);
+                return (
+                  <button
+                    key={bean.id}
+                    onClick={() => handleSelectBean(bean)}
+                    disabled={inCol}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors
+                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
+                      ${inCol ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--color-cream)]'}`}
+                  >
+                    <RoasteryLogo name={bean.roastery} size={28} className="shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-medium text-[var(--color-text-primary)] truncate">
+                        {bean.name}
+                      </p>
+                      <p className="text-[10px] text-[var(--color-text-muted)] truncate">
+                        {bean.roastery} · {bean.origin}
+                      </p>
+                    </div>
+                    {inCol
+                      ? <Check size={14} className="text-[var(--color-text-muted)] shrink-0" />
+                      : <Plus size={14} className="text-[var(--color-text-muted)] shrink-0" />
+                    }
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Manual creation option */}
+          {query.trim().length >= 2 && (
+            <button
+              onClick={handleStartManual}
+              className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left
+                border border-dashed border-[#D0D0D0] text-[var(--color-text-muted)]
+                hover:border-[#AAA] hover:text-[var(--color-text-secondary)] transition-colors
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
+              style={{ minHeight: 48 }}
+            >
+              <Pen size={14} className="shrink-0" />
+              <span className="text-[12px] font-medium">
+                „{query}" manuell anlegen
+              </span>
+            </button>
+          )}
+
+          {query.trim().length < 2 && (
+            <p className="text-[11px] text-[var(--color-text-muted)] text-center mt-6">
+              Tippe los um Bohnen zu finden oder eine neue anzulegen
+            </p>
+          )}
+        </>
+      )}
+
+      {/* Step 1: Manual details */}
+      {addStep === 1 && (
+        <div className="space-y-5">
+          <FormField
+            label="Rösterei"
+            value={addDraft.roastery}
+            onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roastery: v } })}
+            placeholder="z.B. The Barn"
+            required
           />
-        ))}
-      </div>
+          <FormField
+            label="Bohnen-Name"
+            value={addDraft.name}
+            onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { name: v } })}
+            placeholder="z.B. Nano Challa"
+            required
+          />
+          <FormField
+            label="Herkunftsland"
+            value={addDraft.origin}
+            onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { origin: v } })}
+            placeholder="z.B. Äthiopien"
+          />
+          <FormField
+            label="Region"
+            value={addDraft.region}
+            onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { region: v } })}
+            placeholder="z.B. Yirgacheffe"
+          />
+          <div className="mt-6">
+            <button
+              onClick={() => dispatch({ type: 'SET_ADD_STEP', step: 2 })}
+              disabled={!addDraft.roastery.trim() || !addDraft.name.trim()}
+              className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-all
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
+                ${addDraft.roastery.trim() && addDraft.name.trim()
+                  ? 'bg-[var(--color-caramel)] text-white hover:bg-[var(--color-roast-light)]'
+                  : 'bg-[var(--color-cream-dark)] text-[var(--color-text-muted)] cursor-not-allowed'
+                }`}
+              style={{ minHeight: 48 }}
+            >
+              Weiter
+            </button>
+          </div>
+        </div>
+      )}
 
-      {/* Step Content — Progressive Disclosure */}
-      <div className="space-y-5">
-        {addStep === 0 && (
-          <>
-            <FormField
-              label="Rösterei"
-              value={addDraft.roastery}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roastery: v } })}
-              placeholder="z.B. The Barn"
-              required
-            />
-            <FormField
-              label="Stadt"
-              value={addDraft.roasteryCity}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roasteryCity: v } })}
-              placeholder="z.B. Berlin"
-            />
-            <FormField
-              label="Bohnen-Name"
-              value={addDraft.name}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { name: v } })}
-              placeholder="z.B. Nano Challa"
-              required
-            />
-          </>
-        )}
-
-        {addStep === 1 && (
-          <>
-            <FormField
-              label="Herkunftsland"
-              value={addDraft.origin}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { origin: v } })}
-              placeholder="z.B. Äthiopien"
-            />
-            <FormField
-              label="Region"
-              value={addDraft.region}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { region: v } })}
-              placeholder="z.B. Yirgacheffe"
-            />
-            <FormField
-              label="Varietät"
-              value={addDraft.variety}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { variety: v } })}
-              placeholder="z.B. Heirloom"
-            />
-            <FormField
-              label="Höhenlage"
-              value={addDraft.altitude}
-              onChange={v => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { altitude: v } })}
-              placeholder="z.B. 1800m"
-            />
-          </>
-        )}
-
-        {addStep === 2 && (
-          <>
-            {/* Röstgrad — Recognition over Recall: visual picker */}
-            <div>
-              <label className="block text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
-                Röstgrad
-              </label>
-              <div className="flex gap-2">
-                {ROAST_LEVELS.map(level => (
-                  <button
-                    key={level.id}
-                    onClick={() => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roast: level.id } })}
-                    className={`flex-1 py-3 rounded-xl text-center text-xs font-medium transition-all
-                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
-                      ${addDraft.roast === level.id
-                        ? 'ring-2 ring-[var(--color-caramel)] shadow-sm'
-                        : 'hover:bg-[var(--color-cream-dark)]'
-                      }`}
-                    style={{
-                      backgroundColor: addDraft.roast === level.id ? level.color + '20' : 'var(--color-cream)',
-                      color: level.color,
-                      minHeight: 48,
-                    }}
-                  >
-                    <div
-                      className="w-5 h-5 rounded-full mx-auto mb-1"
-                      style={{ backgroundColor: level.color }}
-                    />
-                    {level.label}
-                  </button>
-                ))}
-              </div>
+      {/* Step 2: Roast + Processing */}
+      {addStep === 2 && (
+        <div className="space-y-5">
+          <div>
+            <label className="block text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
+              Röstgrad
+            </label>
+            <div className="flex gap-2">
+              {ROAST_LEVELS.map(level => (
+                <button
+                  key={level.id}
+                  onClick={() => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { roast: level.id } })}
+                  className={`flex-1 py-3 rounded-xl text-center text-xs font-medium transition-all
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
+                    ${addDraft.roast === level.id
+                      ? 'ring-2 ring-[var(--color-caramel)] shadow-sm'
+                      : 'hover:bg-[var(--color-cream-dark)]'
+                    }`}
+                  style={{
+                    backgroundColor: addDraft.roast === level.id ? level.color + '20' : 'var(--color-cream)',
+                    color: level.color,
+                    minHeight: 48,
+                  }}
+                >
+                  <div className="w-5 h-5 rounded-full mx-auto mb-1" style={{ backgroundColor: level.color }} />
+                  {level.label}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Processing */}
-            <div>
-              <label className="block text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
-                Verarbeitung
-              </label>
-              <div className="flex gap-2">
-                {PROCESSING_METHODS.map(method => (
-                  <button
-                    key={method.id}
-                    onClick={() => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { processing: method.id } })}
-                    className={`flex-1 py-3 rounded-xl text-center text-sm font-medium transition-all
-                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
-                      ${addDraft.processing === method.id
-                        ? 'bg-[var(--color-caramel)] text-white shadow-sm'
-                        : 'bg-[var(--color-cream)] text-[var(--color-text-secondary)] hover:bg-[var(--color-cream-dark)]'
-                      }`}
-                    style={{ minHeight: 48 }}
-                  >
-                    {method.label}
-                  </button>
-                ))}
-              </div>
+          <div>
+            <label className="block text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
+              Verarbeitung
+            </label>
+            <div className="flex gap-2">
+              {PROCESSING_METHODS.map(method => (
+                <button
+                  key={method.id}
+                  onClick={() => dispatch({ type: 'UPDATE_ADD_DRAFT', updates: { processing: method.id } })}
+                  className={`flex-1 py-3 rounded-xl text-center text-sm font-medium transition-all
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]
+                    ${addDraft.processing === method.id
+                      ? 'bg-[var(--color-caramel)] text-white shadow-sm'
+                      : 'bg-[var(--color-cream)] text-[var(--color-text-secondary)] hover:bg-[var(--color-cream-dark)]'
+                    }`}
+                  style={{ minHeight: 48 }}
+                >
+                  {method.label}
+                </button>
+              ))}
             </div>
-          </>
-        )}
-      </div>
+          </div>
 
-      {/* Action buttons */}
-      <div className="mt-8 space-y-3">
-        <button
-          onClick={() => {
-            if (isLastStep) {
-              dispatch({ type: 'SAVE_CUSTOM_BEAN' });
-              showToast('Bohne zur Sammlung hinzugefügt!');
-            } else {
-              dispatch({ type: 'SET_ADD_STEP', step: addStep + 1 });
-            }
-          }}
-          disabled={!canProceed}
-          className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-all
-            focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] focus-visible:ring-offset-2
-            ${canProceed
-              ? 'bg-[var(--color-caramel)] text-white hover:bg-[var(--color-roast-light)]'
-              : 'bg-[var(--color-cream-dark)] text-[var(--color-text-muted)] cursor-not-allowed'
-            }`}
-          style={{ minHeight: 48 }}
-        >
-          {isLastStep ? 'Bohne speichern' : 'Weiter'}
-        </button>
-
-        {!isLastStep && addStep > 0 && (
-          <button
-            onClick={() => {
-              // Skip optional details
-              if (isLastStep) return;
-              dispatch({ type: 'SET_ADD_STEP', step: addStep + 1 });
-            }}
-            className="w-full py-3 text-sm text-[var(--color-text-muted)] font-medium
-              hover:text-[var(--color-text-secondary)] transition-colors
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)] rounded-xl"
-            style={{ minHeight: 48 }}
-          >
-            Überspringen
-          </button>
-        )}
-      </div>
+          <div className="mt-6">
+            <button
+              onClick={() => {
+                dispatch({ type: 'SAVE_CUSTOM_BEAN' });
+                showToast('Bohne zur Sammlung hinzugefügt!');
+              }}
+              className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all
+                bg-[var(--color-caramel)] text-white hover:bg-[var(--color-roast-light)]
+                focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-caramel)]"
+              style={{ minHeight: 48 }}
+            >
+              Bohne speichern
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1678,6 +1944,72 @@ function FirstUseHint({ onDismiss }) {
 }
 
 // ──────────────────────────────────────────────
+// Settings View
+// ──────────────────────────────────────────────
+
+function SettingsView({ state, dispatch, showToast }) {
+  // For now, equipment is read from the constants — later this could be persisted
+  const [grinder, setGrinder] = useState(GRINDER.name);
+  const [machine, setMachine] = useState('Rocket Appartamento');
+
+  return (
+    <div className="px-4 pt-4 pb-4">
+      <h1 className="text-2xl font-semibold leading-tight" style={{ fontFamily: 'var(--font-display)' }}>
+        Einstellungen
+      </h1>
+      <p className="text-sm text-[var(--color-text-muted)] mt-0.5 mb-6">
+        Equipment & Präferenzen
+      </p>
+
+      <div className="space-y-4">
+        {/* Mühle */}
+        <div className="bg-white rounded-xl p-4" style={{ border: '1px solid #EBEBEB' }}>
+          <label className="block text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">
+            Mühle
+          </label>
+          <select
+            value={grinder}
+            onChange={e => setGrinder(e.target.value)}
+            className="w-full text-[14px] font-medium text-[var(--color-text-primary)] bg-transparent
+              border-none outline-none cursor-pointer appearance-none"
+          >
+            <option>Niche Zero</option>
+            <option>Eureka Mignon Specialità</option>
+            <option>Baratza Sette 270</option>
+            <option>Comandante C40</option>
+            <option>DF64</option>
+            <option>Lagom P64</option>
+            <option>Fellow Ode</option>
+          </select>
+        </div>
+
+        {/* Maschine */}
+        <div className="bg-white rounded-xl p-4" style={{ border: '1px solid #EBEBEB' }}>
+          <label className="block text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">
+            Espressomaschine
+          </label>
+          <select
+            value={machine}
+            onChange={e => setMachine(e.target.value)}
+            className="w-full text-[14px] font-medium text-[var(--color-text-primary)] bg-transparent
+              border-none outline-none cursor-pointer appearance-none"
+          >
+            <option>Rocket Appartamento</option>
+            <option>ECM Classika</option>
+            <option>Lelit Bianca</option>
+            <option>Bezzera BZ10</option>
+            <option>Profitec Pro 300</option>
+            <option>La Marzocco Linea Mini</option>
+            <option>Sage Barista Express</option>
+            <option>Rancilio Silvia</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ──────────────────────────────────────────────
 // Bottom Navigation
 // ──────────────────────────────────────────────
 
@@ -1685,7 +2017,7 @@ function BottomNav({ activeTab, onNavigate, collectionCount }) {
   const tabs = [
     { id: 'collection', label: 'Sammlung', icon: TapeCup2, badge: collectionCount },
     { id: 'discover', label: 'Entdecken', icon: TapeSearch },
-    { id: 'add', label: 'Hinzufügen', icon: TapePlus },
+    { id: 'settings', label: 'Einstellungen', icon: TapeSettings },
   ];
 
   return (
@@ -1836,14 +2168,17 @@ export default function App() {
     if (state.currentView === 'detail') {
       return <BeanDetailView state={state} dispatch={dispatch} showToast={showToast} />;
     }
+    if (state.currentView === 'addManual') {
+      return <AddBeanFlow state={state} dispatch={dispatch} showToast={showToast} />;
+    }
 
     switch (state.activeTab) {
       case 'collection':
         return <CollectionView state={state} dispatch={dispatch} showToast={showToast} />;
       case 'discover':
         return <DiscoverView state={state} dispatch={dispatch} showToast={showToast} />;
-      case 'add':
-        return <AddView state={state} dispatch={dispatch} showToast={showToast} />;
+      case 'settings':
+        return <SettingsView state={state} dispatch={dispatch} showToast={showToast} />;
       default:
         return null;
     }

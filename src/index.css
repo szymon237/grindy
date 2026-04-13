@@ -154,6 +154,28 @@ input[type="range"]::-moz-range-thumb {
   animation: toast-out 0.3s ease forwards;
 }
 
+/* Leaflet custom tooltip */
+.leaflet-tooltip-custom {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.leaflet-tooltip-custom::before {
+  border-top-color: #000;
+}
+
+/* Leaflet container inside discover view */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--color-cream);
+}
+
 /* Skeleton shimmer */
 @keyframes shimmer {
   0% { background-position: -200% 0; }

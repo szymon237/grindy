@@ -53,118 +53,103 @@ export const LOCATIONS = [
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Röstereien
   // ══════════════════════════════════════════════
-  { name: 'SCHVARZ', city: 'Düsseldorf', address: 'Ronsdorfer Str. 74, Flingern', lat: 51.2195, lng: 6.8085, type: 'roastery', sellsBeans: true },
-  { name: 'RVTC', city: 'Düsseldorf', address: 'Berger Str. 29, Altstadt', lat: 51.2258, lng: 6.7738, type: 'roastery', sellsBeans: true },
-  { name: 'Carl Ferdinand', city: 'Düsseldorf', address: 'Düsselthaler Str. 39, Pempelfort', lat: 51.2368, lng: 6.7842, type: 'roastery', sellsBeans: true },
-  { name: 'Röstzeit', city: 'Düsseldorf', address: 'Birkenstr. 81, Flingern', lat: 51.2192, lng: 6.8098, type: 'roastery', sellsBeans: true },
-  { name: 'BREW Specialty Coffee', city: 'Düsseldorf', address: 'Bilker Allee 53, Bilk', lat: 51.2150, lng: 6.7830, type: 'roastery', sellsBeans: true },
-  { name: 'Heinemann Kaffeerösterei', city: 'Düsseldorf', address: 'Flinger Str. 18, Altstadt', lat: 51.2250, lng: 6.7780, type: 'roastery', sellsBeans: true },
-  { name: 'Lightroast Coffee', city: 'Düsseldorf', address: 'Hoffeldstr. 104, Flingern Süd', lat: 51.2175, lng: 6.8105, type: 'roastery', sellsBeans: true },
-  { name: 'Fjaka Café & Rösterei', city: 'Düsseldorf', address: 'Ackerstr. 204, Flingern', lat: 51.2195, lng: 6.8060, type: 'roastery', sellsBeans: true },
-  { name: 'Die Röstmeister', city: 'Düsseldorf', address: 'Quirinstr. 2, Oberkassel', lat: 51.2300, lng: 6.7525, type: 'roastery', sellsBeans: true },
-  { name: 'Kaffeeschmiede', city: 'Düsseldorf', address: 'Belsenstr. 11, Oberkassel', lat: 51.2305, lng: 6.7530, type: 'roastery', sellsBeans: true },
-  { name: 'Das Coffe Roastery', city: 'Düsseldorf', address: 'Wiesenstr. 32, Heerdt', lat: 51.2340, lng: 6.7280, type: 'roastery', sellsBeans: true },
-  { name: 'Rivercoffee', city: 'Düsseldorf', address: 'Am Kreuzberg 8, Kaiserswerth', lat: 51.3025, lng: 6.7340, type: 'roastery', sellsBeans: true },
+  { name: 'SCHVARZ', city: 'Düsseldorf', address: 'Ronsdorfer Str. 74, Flingern', lat: 51.2192, lng: 6.8236, type: 'roastery', sellsBeans: true },
+  { name: 'RVTC', city: 'Düsseldorf', address: 'Wallstraße 10, Altstadt', lat: 51.2246, lng: 6.7736, type: 'roastery', sellsBeans: true },
+  { name: 'Carl Ferdinand', city: 'Düsseldorf', address: 'Düsselthaler Str. 39, Pempelfort', lat: 51.2335, lng: 6.7925, type: 'roastery', sellsBeans: true },
+  { name: 'Röstzeit', city: 'Düsseldorf', address: 'Oststraße 115, Stadtmitte', lat: 51.2219, lng: 6.7856, type: 'roastery', sellsBeans: true },
+  { name: 'BREW Specialty Coffee', city: 'Düsseldorf', address: 'Bilker Allee 53, Bilk', lat: 51.2108, lng: 6.7678, type: 'roastery', sellsBeans: true },
+  { name: 'Lightroast Coffee', city: 'Düsseldorf', address: 'Hoffeldstr. 104, Flingern Süd', lat: 51.2265, lng: 6.8170, type: 'roastery', sellsBeans: true },
+  { name: 'Fjaka Café & Rösterei', city: 'Düsseldorf', address: 'Ackerstr. 204, Flingern', lat: 51.2318, lng: 6.8119, type: 'roastery', sellsBeans: true },
+  { name: 'Die Röstmeister', city: 'Düsseldorf', address: 'Quirinstr. 1a, Oberkassel', lat: 51.2318, lng: 6.7482, type: 'roastery', sellsBeans: true },
+  { name: 'Kaffeeschmiede', city: 'Düsseldorf', address: 'Belsenstr. 11, Oberkassel', lat: 51.2305, lng: 6.7463, type: 'roastery', sellsBeans: true },
+  { name: 'Das Coffe Roastery', city: 'Düsseldorf', address: 'Wiesenstr. 32, Heerdt', lat: 51.2294, lng: 6.7094, type: 'roastery', sellsBeans: true },
+  { name: 'Rivercoffee', city: 'Düsseldorf', address: 'Am Kreuzberg 8, Kaiserswerth', lat: 51.3014, lng: 6.7407, type: 'roastery', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Altstadt / Carlstadt / Stadtmitte
   // ══════════════════════════════════════════════
-  { name: 'Drip Coffee', city: 'Düsseldorf', address: 'Bastionstr. 11, Carlstadt', lat: 51.2210, lng: 6.7720, type: 'cafe', sellsBeans: true },
-  { name: 'Pourover', city: 'Düsseldorf', address: 'Carlsplatz 1, Carlstadt', lat: 51.2215, lng: 6.7745, type: 'cafe', sellsBeans: true },
-  { name: 'Woyton', city: 'Düsseldorf', address: 'Königsallee 36, Stadtmitte', lat: 51.2240, lng: 6.7795, type: 'cafe', sellsBeans: true },
-  { name: 'Jones Coffee', city: 'Düsseldorf', address: 'Oststr. 36, Stadtmitte', lat: 51.2230, lng: 6.7890, type: 'cafe', sellsBeans: true },
+  { name: 'Woyton', city: 'Düsseldorf', address: 'Friedrichstr. 20, Carlstadt', lat: 51.2168, lng: 6.7771, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Unterbilk
   // ══════════════════════════════════════════════
-  { name: 'Röstzeit Café', city: 'Düsseldorf', address: 'Lorettostr. 54, Unterbilk', lat: 51.2138, lng: 6.7690, type: 'cafe', sellsBeans: true },
-  { name: 'Weird Space Cafe', city: 'Düsseldorf', address: 'Volmerswerther Str. 53, Unterbilk', lat: 51.2135, lng: 6.7695, type: 'cafe', sellsBeans: true },
-  { name: 'Mercy Coffee Unterbilk', city: 'Düsseldorf', address: 'Neusser Str. 121, Unterbilk', lat: 51.2170, lng: 6.7725, type: 'cafe', sellsBeans: true },
-  { name: 'Caffe Ma', city: 'Düsseldorf', address: 'Bilker Allee 38, Unterbilk', lat: 51.2160, lng: 6.7820, type: 'cafe', sellsBeans: false },
-  { name: 'Covent Garden Coffee', city: 'Düsseldorf', address: 'Bilker Allee 126, Unterbilk', lat: 51.2120, lng: 6.7870, type: 'cafe', sellsBeans: true },
-  { name: 'Café Reme', city: 'Düsseldorf', address: 'Kronprinzenstr. 97, Unterbilk', lat: 51.2175, lng: 6.7780, type: 'cafe', sellsBeans: true },
+  { name: 'Weird Space Cafe', city: 'Düsseldorf', address: 'Volmerswerther Str. 53, Unterbilk', lat: 51.2083, lng: 6.7607, type: 'cafe', sellsBeans: true },
+  { name: 'Mercy Coffee Unterbilk', city: 'Düsseldorf', address: 'Neusser Str. 121, Unterbilk', lat: 51.2123, lng: 6.7634, type: 'cafe', sellsBeans: true },
+  { name: 'Caffe Ma', city: 'Düsseldorf', address: 'Bilker Allee 38, Unterbilk', lat: 51.2112, lng: 6.7662, type: 'cafe', sellsBeans: false },
+  { name: 'Covent Garden Coffee', city: 'Düsseldorf', address: 'Bilker Allee 126, Unterbilk', lat: 51.2108, lng: 6.7742, type: 'cafe', sellsBeans: true },
+  { name: 'Café Reme', city: 'Düsseldorf', address: 'Kronprinzenstr. 97, Unterbilk', lat: 51.2114, lng: 6.7696, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Bilk
   // ══════════════════════════════════════════════
-  { name: 'Kaffeemacher', city: 'Düsseldorf', address: 'Aachener Str. 28, Bilk', lat: 51.2090, lng: 6.7770, type: 'cafe', sellsBeans: true },
+  { name: 'Röstzeit Café', city: 'Düsseldorf', address: 'Moorenstr. 68, Bilk', lat: 51.1991, lng: 6.7884, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Hafen / Medienhafen
   // ══════════════════════════════════════════════
-  { name: 'Carl Ferdinand Kaffeebar', city: 'Düsseldorf', address: 'Wupperstr. 3, Hafen', lat: 51.2145, lng: 6.7650, type: 'cafe', sellsBeans: true },
-  { name: 'Greger Café', city: 'Düsseldorf', address: 'Erftstr. 1, Hafen', lat: 51.2160, lng: 6.7620, type: 'cafe', sellsBeans: true },
+  { name: 'Carl Ferdinand Kaffeebar', city: 'Düsseldorf', address: 'Wupperstr. 3, Hafen', lat: 51.2149, lng: 6.7573, type: 'cafe', sellsBeans: true },
+  { name: 'Greger Café', city: 'Düsseldorf', address: 'Erftstr. 1, Hafen', lat: 51.2140, lng: 6.7560, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Friedrichstadt
   // ══════════════════════════════════════════════
-  { name: 'Weird Space Friedrichstadt', city: 'Düsseldorf', address: 'Hüttenstr. 76, Friedrichstadt', lat: 51.2155, lng: 6.7880, type: 'cafe', sellsBeans: true },
-  { name: 'Café Stoak', city: 'Düsseldorf', address: 'Adersstr. 48, Friedrichstadt', lat: 51.2188, lng: 6.7905, type: 'cafe', sellsBeans: true },
-  { name: 'Espresso Perfetto', city: 'Düsseldorf', address: 'Bilker Allee 224, Friedrichstadt', lat: 51.2080, lng: 6.7920, type: 'cafe', sellsBeans: true },
-  // ══════════════════════════════════════════════
-  // DÜSSELDORF — Pempelfort / Derendorf / Golzheim
-  // ══════════════════════════════════════════════
-  { name: 'Manus Café', city: 'Düsseldorf', address: 'Herzogstr. 28, Pempelfort', lat: 51.2345, lng: 6.7880, type: 'cafe', sellsBeans: true },
-  { name: 'The Coffee', city: 'Düsseldorf', address: 'Nordstr. 32, Pempelfort', lat: 51.2380, lng: 6.7855, type: 'cafe', sellsBeans: true },
+  { name: 'Weird Space Friedrichstadt', city: 'Düsseldorf', address: 'Hüttenstr. 76, Friedrichstadt', lat: 51.2151, lng: 6.7867, type: 'cafe', sellsBeans: true },
+  { name: 'Café Stoak', city: 'Düsseldorf', address: 'Adersstr. 48, Friedrichstadt', lat: 51.2181, lng: 6.7830, type: 'cafe', sellsBeans: true },
+  { name: 'Espresso Perfetto', city: 'Düsseldorf', address: 'Bilker Allee 224, Friedrichstadt', lat: 51.2111, lng: 6.7820, type: 'cafe', sellsBeans: true },
+  { name: 'Lina\'s Coffee', city: 'Düsseldorf', address: 'Fürstenplatz 1, Friedrichstadt', lat: 51.2141, lng: 6.7849, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Flingern Nord
   // ══════════════════════════════════════════════
-  { name: 'Jaenner Modern Coffee', city: 'Düsseldorf', address: 'Ackerstr. 80, Flingern Nord', lat: 51.2230, lng: 6.8010, type: 'cafe', sellsBeans: true },
-  { name: 'Kaffeehandwerk', city: 'Düsseldorf', address: 'Birkenstr. 127, Flingern Nord', lat: 51.2185, lng: 6.8115, type: 'cafe', sellsBeans: true },
-  { name: 'Mercy Coffee Flingern', city: 'Düsseldorf', address: 'Birkenstr. 73, Flingern Nord', lat: 51.2205, lng: 6.8070, type: 'cafe', sellsBeans: true },
-  { name: 'Bulle Bistro', city: 'Düsseldorf', address: 'Birkenstr. 47a, Flingern Nord', lat: 51.2210, lng: 6.8055, type: 'cafe', sellsBeans: true },
-  { name: 'Kausal Café', city: 'Düsseldorf', address: 'Flurstr. 1, Flingern Nord', lat: 51.2225, lng: 6.8035, type: 'cafe', sellsBeans: false },
-  { name: 'Café Hüftgold', city: 'Düsseldorf', address: 'Ackerstr. 113, Flingern Nord', lat: 51.2218, lng: 6.8020, type: 'cafe', sellsBeans: false },
-  { name: 'Café Liebe', city: 'Düsseldorf', address: 'Platanenstr. 22, Flingern Nord', lat: 51.2235, lng: 6.8020, type: 'cafe', sellsBeans: false },
-  { name: 'Oma Erika', city: 'Düsseldorf', address: 'Hermannstr. 34b, Flingern Nord', lat: 51.2242, lng: 6.8000, type: 'cafe', sellsBeans: false },
-  { name: 'Kathe', city: 'Düsseldorf', address: 'Birkenstr. 49, Flingern Nord', lat: 51.2200, lng: 6.8060, type: 'cafe', sellsBeans: true },
-  { name: 'Coffeedrap', city: 'Düsseldorf', address: 'Grafenberger Allee 30, Flingern', lat: 51.2265, lng: 6.8045, type: 'cafe', sellsBeans: true },
+  { name: 'Jaenner Modern Coffee', city: 'Düsseldorf', address: 'Ackerstr. 80, Flingern Nord', lat: 51.2273, lng: 6.8004, type: 'cafe', sellsBeans: true },
+  { name: 'Kaffeehandwerk', city: 'Düsseldorf', address: 'Birkenstr. 127, Flingern Nord', lat: 51.2269, lng: 6.8091, type: 'cafe', sellsBeans: true },
+  { name: 'Mercy Coffee Flingern', city: 'Düsseldorf', address: 'Birkenstr. 73, Flingern Nord', lat: 51.2268, lng: 6.8045, type: 'cafe', sellsBeans: true },
+  { name: 'Bulle Bistro', city: 'Düsseldorf', address: 'Birkenstr. 47a, Flingern Nord', lat: 51.2266, lng: 6.8031, type: 'cafe', sellsBeans: true },
+  { name: 'Kausal Café', city: 'Düsseldorf', address: 'Flurstr. 1, Flingern Nord', lat: 51.2274, lng: 6.8122, type: 'cafe', sellsBeans: false },
+  { name: 'Café Hüftgold', city: 'Düsseldorf', address: 'Ackerstr. 113, Flingern Nord', lat: 51.2286, lng: 6.8038, type: 'cafe', sellsBeans: false },
+  { name: 'Café Liebe', city: 'Düsseldorf', address: 'Platanenstr. 22, Flingern Nord', lat: 51.2282, lng: 6.8103, type: 'cafe', sellsBeans: false },
+  { name: 'Oma Erika', city: 'Düsseldorf', address: 'Hermannstr. 34b, Flingern Nord', lat: 51.2291, lng: 6.8082, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Flingern Süd
   // ══════════════════════════════════════════════
-  { name: 'Coffee-Bar', city: 'Düsseldorf', address: 'Flurstr. 38, Flingern Süd', lat: 51.2178, lng: 6.8100, type: 'cafe', sellsBeans: false },
-  // ══════════════════════════════════════════════
-  // DÜSSELDORF — Düsseltal / Zooviertel
-  // ══════════════════════════════════════════════
-  { name: 'Lina\'s Coffee', city: 'Düsseldorf', address: 'Rethelstr. 113, Düsseltal', lat: 51.2325, lng: 6.8070, type: 'cafe', sellsBeans: true },
+  { name: 'Coffee-Bar', city: 'Düsseldorf', address: 'Flurstr. 38, Flingern Süd', lat: 51.2286, lng: 6.8143, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Oberbilk
   // ══════════════════════════════════════════════
-  { name: 'Genussstation x Marny\'s', city: 'Düsseldorf', address: 'Ellerstr. 219, Oberbilk', lat: 51.2140, lng: 6.7960, type: 'cafe', sellsBeans: false },
+  { name: 'Genussstation x Marny\'s', city: 'Düsseldorf', address: 'Ellerstr. 219, Oberbilk', lat: 51.2131, lng: 6.8059, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Eller
   // ══════════════════════════════════════════════
-  { name: 'Düssel Café', city: 'Düsseldorf', address: 'Gumbertstr. 190, Eller', lat: 51.2030, lng: 6.8420, type: 'cafe', sellsBeans: false },
-  { name: 'Caffè Ma Grande', city: 'Düsseldorf', address: 'Gumbertstr. 118, Eller', lat: 51.2050, lng: 6.8380, type: 'cafe', sellsBeans: false },
+  { name: 'Düssel Café', city: 'Düsseldorf', address: 'Gumbertstr. 190, Eller', lat: 51.1992, lng: 6.8443, type: 'cafe', sellsBeans: false },
+  { name: 'Caffè Ma', city: 'Düsseldorf', address: 'Gumbertstr. 118, Eller', lat: 51.2015, lng: 6.8371, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Gerresheim
   // ══════════════════════════════════════════════
-  { name: 'Orange Finest Coffee', city: 'Düsseldorf', address: 'Neusser Tor 17A, Gerresheim', lat: 51.2350, lng: 6.8680, type: 'cafe', sellsBeans: true },
+  { name: 'Orange Finest Coffee', city: 'Düsseldorf', address: 'Neusser Tor 17A, Gerresheim', lat: 51.2371, lng: 6.8605, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Oberkassel / Niederkassel
   // ══════════════════════════════════════════════
-  { name: 'Copenhagen Coffee Lab', city: 'Düsseldorf', address: 'Luegallee 136, Oberkassel', lat: 51.2310, lng: 6.7490, type: 'cafe', sellsBeans: true },
+  { name: 'Copenhagen Coffee Lab', city: 'Düsseldorf', address: 'Luegallee 136, Oberkassel', lat: 51.2320, lng: 6.7475, type: 'cafe', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Heerdt
   // ══════════════════════════════════════════════
-  { name: 'Café Freund', city: 'Düsseldorf', address: 'Viersener Str. 34, Heerdt', lat: 51.2335, lng: 6.7260, type: 'cafe', sellsBeans: false },
+  { name: 'Café Freund', city: 'Düsseldorf', address: 'Viersener Str. 34, Heerdt', lat: 51.2362, lng: 6.7294, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Benrath
   // ══════════════════════════════════════════════
-  { name: 'Röstzeit Benrath', city: 'Düsseldorf', address: 'Börchemstr. 38, Benrath', lat: 51.1630, lng: 6.8710, type: 'roastery', sellsBeans: true },
+  { name: 'Röstzeit Benrath', city: 'Düsseldorf', address: 'Börchemstr. 38, Benrath', lat: 51.1650, lng: 6.8738, type: 'roastery', sellsBeans: true },
   // ══════════════════════════════════════════════
   // DÜSSELDORF — Wersten
   // ══════════════════════════════════════════════
-  { name: 'Café Südpark', city: 'Düsseldorf', address: 'In den Großen Banden 68, Wersten', lat: 51.1985, lng: 6.7920, type: 'cafe', sellsBeans: false },
+  { name: 'Café Südpark', city: 'Düsseldorf', address: 'In den Großen Banden 58, Wersten', lat: 51.1976, lng: 6.8031, type: 'cafe', sellsBeans: false },
   // ══════════════════════════════════════════════
   // ANDERE STÄDTE
   // ══════════════════════════════════════════════
   // ── Berlin ──
-  { name: 'The Barn', city: 'Berlin', address: 'Schönhauser Allee 8, Mitte', lat: 52.5290, lng: 13.4100, type: 'roastery', sellsBeans: true },
-  { name: 'Bonanza Coffee', city: 'Berlin', address: 'Adalbertstr. 70, Kreuzberg', lat: 52.5005, lng: 13.4185, type: 'roastery', sellsBeans: true },
-  { name: 'Five Elephant', city: 'Berlin', address: 'Reichenberger Str. 101, Kreuzberg', lat: 52.4970, lng: 13.4310, type: 'roastery', sellsBeans: true },
-  { name: '19grams', city: 'Berlin', address: 'Alexanderstr. 7, Mitte', lat: 52.5220, lng: 13.4130, type: 'roastery', sellsBeans: true },
+  { name: 'The Barn', city: 'Berlin', address: 'Schönhauser Allee 8, Mitte', lat: 52.5298, lng: 13.4107, type: 'roastery', sellsBeans: true },
+  { name: 'Bonanza Coffee', city: 'Berlin', address: 'Adalbertstr. 70, Kreuzberg', lat: 52.5042, lng: 13.4203, type: 'roastery', sellsBeans: true },
+  { name: 'Five Elephant', city: 'Berlin', address: 'Reichenberger Str. 101, Kreuzberg', lat: 52.4934, lng: 13.4383, type: 'roastery', sellsBeans: true },
+  { name: '19grams', city: 'Berlin', address: 'Karl-Liebknecht-Str. 13, Mitte', lat: 52.5223, lng: 13.4077, type: 'roastery', sellsBeans: true },
   // ── Hamburg ──
-  { name: 'Elbgold', city: 'Hamburg', address: 'Lagerstr. 34c, Schanzenviertel', lat: 53.5630, lng: 9.9670, type: 'roastery', sellsBeans: true },
-  { name: 'Public Coffee Roasters', city: 'Hamburg', address: 'Goldbekplatz 1, Winterhude', lat: 53.5810, lng: 10.0080, type: 'roastery', sellsBeans: true },
+  { name: 'Elbgold', city: 'Hamburg', address: 'Lagerstr. 34c, Schanzenviertel', lat: 53.5632, lng: 9.9669, type: 'roastery', sellsBeans: true },
+  { name: 'Public Coffee Roasters', city: 'Hamburg', address: 'Goldbekplatz 1, Winterhude', lat: 53.5837, lng: 10.0089, type: 'roastery', sellsBeans: true },
   // ── Weitere ──
-  { name: 'Hoppenworth & Ploch', city: 'Frankfurt', address: 'Fahrgasse 111, Innenstadt', lat: 50.1140, lng: 8.6900, type: 'roastery', sellsBeans: true },
-  { name: 'Heilandt', city: 'Köln', address: 'Herwarthstr. 18, Ehrenfeld', lat: 50.9480, lng: 6.9210, type: 'roastery', sellsBeans: true },
+  { name: 'Hoppenworth & Ploch', city: 'Frankfurt', address: 'Friedberger Landstr. 86, Nordend', lat: 50.1248, lng: 8.6920, type: 'roastery', sellsBeans: true },
+  { name: 'Heilandt', city: 'Köln', address: 'Bismarckstr. 41, Belgisches Viertel', lat: 50.9408, lng: 6.9345, type: 'roastery', sellsBeans: true },
 ];
 
 // Haversine distance in meters

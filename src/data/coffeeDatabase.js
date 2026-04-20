@@ -234,6 +234,7 @@ export const COUNTRY_FLAGS = {
   'Indien': '🇮🇳',
   'Nicaragua': '🇳🇮',
   'Malawi': '🇲🇼',
+  'Jemen': '🇾🇪',
 };
 
 let beanId = 1;
@@ -331,9 +332,24 @@ export const COFFEE_DATABASE = [
   b('SCHVARZ', 'Düsseldorf', 'Costa Rica Java', 'Costa Rica', 'Pérez Zeledón', 'natural', 'light-medium', 'Java', '1300-1700m', ['Schokolade', 'Beeren', 'Karamell']),
 
   // RVTC — Rösterei Vier The Commonage, Altstadt
-  b('RVTC', 'Düsseldorf', 'Italo Pop', 'Tansania', 'Kilimanjaro', 'natural', 'medium-dark', 'Bourbon', '1500m', ['Gewürze', 'Schokolade', 'Nuss']),
-  b('RVTC', 'Düsseldorf', 'Garage House', 'Kolumbien', 'Huila', 'washed', 'light-medium', 'Castillo', '1800m', ['Nuss', 'Karamell', 'Schokolade']),
-  b('RVTC', 'Düsseldorf', 'Jungle Boogie', 'Äthiopien', 'Sidamo', 'natural', 'light', 'Heirloom', '1900m', ['Tropenfrüchte', 'Beeren', 'Gewürze']),
+  // Blends
+  b('RVTC', 'Düsseldorf', 'Desert Rose', 'Jemen', 'Blend', 'natural', 'dark', 'Mocca Sanani', '2000m', ['Schokolade', 'Nuss', 'Gewürze']),
+  b('RVTC', 'Düsseldorf', 'Italo Pop', 'Tansania', 'Blend', 'washed', 'dark', 'Bourbon', '1500m', ['Gewürze', 'Schokolade', 'Nuss']),
+  b('RVTC', 'Düsseldorf', 'Garage House', 'Kolumbien', 'Blend', 'washed', 'medium', 'Caturra', '1700m', ['Nuss', 'Karamell', 'Schokolade']),
+  b('RVTC', 'Düsseldorf', 'Jungle Boogie', 'Äthiopien', 'Blend', 'natural', 'medium', 'Heirloom', '2000m', ['Beeren', 'Gewürze', 'Tropenfrüchte']),
+  b('RVTC', 'Düsseldorf', 'Bulle Blend', 'Tansania', 'Blend', 'washed', 'dark', 'Bourbon', '1500m', ['Schokolade', 'Gewürze', 'Beeren']),
+  b('RVTC', 'Düsseldorf', 'The Commonage', 'Malawi', 'Ntchisi', 'washed', 'dark', 'Catimor', '1400m', ['Schokolade', 'Nuss', 'Karamell']),
+  // Single Origins
+  b('RVTC', 'Düsseldorf', 'Antonio Alvarado', 'Costa Rica', 'Pérez Zeledón', 'natural', 'light', 'Milenio', '1500m', ['Beeren', 'Karamell', 'Tropenfrüchte']),
+  b('RVTC', 'Düsseldorf', 'Gara Kogne', 'Äthiopien', 'West Arsi', 'washed', 'light-medium', 'Heirloom', '2000m', ['Blumen', 'Zitrus', 'Honig']),
+  b('RVTC', 'Düsseldorf', 'Mundayo AASH', 'Äthiopien', 'West Arsi', 'natural', 'medium', 'Heirloom', '2000m', ['Brombeere', 'Aprikose', 'Gewürze']),
+  b('RVTC', 'Düsseldorf', 'El Congo', 'Costa Rica', 'Tarrazu', 'honey', 'medium', 'Typica', '1900m', ['Karamell', 'Steinobst', 'Mandel']),
+  b('RVTC', 'Düsseldorf', 'Vanessa Moreno', 'Brasilien', 'Alta Mogiana', 'natural', 'medium', 'Yellow Bourbon', '1040m', ['Schokolade', 'Nuss', 'Vanille']),
+  // Decaf
+  b('RVTC', 'Düsseldorf', 'Italo Pop Decaf', 'Kolumbien', 'Blend', 'washed', 'dark', 'Caturra', '1700m', ['Schokolade', 'Gewürze', 'Nuss']),
+  b('RVTC', 'Düsseldorf', 'Pink Bourbon Decaf', 'Kolumbien', 'Acevedo, Huila', 'anaerobic', 'medium', 'Pink Bourbon', '1750m', ['Gewürze', 'Blumen', 'Orange']),
+  b('RVTC', 'Düsseldorf', 'Dimtu Tora Guji Decaf', 'Äthiopien', 'Guji', 'natural', 'medium', 'Heirloom', '1900-2300m', ['Beeren', 'Schokolade', 'Zitrus']),
+  b('RVTC', 'Düsseldorf', 'Carbonic Natural Decaf', 'Kolumbien', 'Sierra Nevada', 'natural', 'dark', 'Caturra', '1600m', ['Schokolade', 'Karamell', 'Gewürze']),
 
   // Carl Ferdinand — Röstfabrik Pempelfort, Winde-der-See Blends
   b('Carl Ferdinand', 'Düsseldorf', 'Levante', 'Äthiopien', 'Yirgacheffe', 'washed', 'light-medium', 'Heirloom', '1900m', ['Blumen', 'Zitrus', 'Honig']),

@@ -332,11 +332,12 @@ export const COFFEE_DATABASE = [
   b('SCHVARZ', 'Düsseldorf', 'Costa Rica Java', 'Costa Rica', 'Pérez Zeledón', 'natural', 'light-medium', 'Java', '1300-1700m', ['Schokolade', 'Beeren', 'Karamell']),
 
   // RVTC — Rösterei Vier The Commonage, Altstadt
-  // Blends
-  b('RVTC', 'Düsseldorf', 'Desert Rose', 'Jemen', 'Blend', 'natural', 'dark', 'Mocca Sanani', '2000m', ['Schokolade', 'Nuss', 'Gewürze']),
+  // Blends (original 3 first — IDs müssen stabil bleiben für bestehende Collections)
   b('RVTC', 'Düsseldorf', 'Italo Pop', 'Tansania', 'Blend', 'washed', 'dark', 'Bourbon', '1500m', ['Gewürze', 'Schokolade', 'Nuss']),
   b('RVTC', 'Düsseldorf', 'Garage House', 'Kolumbien', 'Blend', 'washed', 'medium', 'Caturra', '1700m', ['Nuss', 'Karamell', 'Schokolade']),
   b('RVTC', 'Düsseldorf', 'Jungle Boogie', 'Äthiopien', 'Blend', 'natural', 'medium', 'Heirloom', '2000m', ['Beeren', 'Gewürze', 'Tropenfrüchte']),
+  // Weitere Blends
+  b('RVTC', 'Düsseldorf', 'Desert Rose', 'Jemen', 'Blend', 'natural', 'dark', 'Mocca Sanani', '2000m', ['Schokolade', 'Nuss', 'Gewürze']),
   b('RVTC', 'Düsseldorf', 'Bulle Blend', 'Tansania', 'Blend', 'washed', 'dark', 'Bourbon', '1500m', ['Schokolade', 'Gewürze', 'Beeren']),
   b('RVTC', 'Düsseldorf', 'The Commonage', 'Malawi', 'Ntchisi', 'washed', 'dark', 'Catimor', '1400m', ['Schokolade', 'Nuss', 'Karamell']),
   // Single Origins

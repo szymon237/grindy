@@ -391,8 +391,108 @@ export const COFFEE_DATABASE = [
   b('Cross Coffee', 'Bremen', 'La Cristalina', 'Kolumbien', 'Huila', 'washed', 'light', 'Caturra', '1800m', ['Beeren', 'Zitrus', 'Karamell']),
 ];
 
+// ── Recipe Overrides ──────────────────────────
+// Community- & Rösterei-basierte Rezepte (Kaffee-Netz, RVTC Website, GrindDial)
+// Überschreiben die algorithmischen Defaults wenn vorhanden
+// Optimiert für: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
+const RECIPE_OVERRIDES = {
+  // RVTC — Quellen: rvtc.com Produktseiten, Kaffee-Netz RVTC-Thread (S.1-10), User-Reports
+  // RVTC-Café-Standard: 1:2.5, 94.5°C, 21g Baskets (La Marzocco + Mythos 1)
+  'RVTC:Desert Rose': {
+    // rvtc.com: 1:2, 91-92°C, 21-25s | KN S.3: 1:2.5, 32-35s | KN S.9: 18.4g→40.5g, 25.5s
+    single:      { grind: 18,   dose: 10, yield: 22, time: 24 },
+    double:      { grind: 19,   dose: 18, yield: 40, time: 25 },
+    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 26 },
+  },
+  'RVTC:Italo Pop': {
+    // rvtc.com: 1:2, 91-92°C, 21-25s | KN S.3: 1:2.5, 25-30s | KN S.9: 18.3g→39.5g, 27s
+    single:      { grind: 17,   dose: 10, yield: 22, time: 25 },
+    double:      { grind: 18,   dose: 18, yield: 39, time: 27 },
+    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+  },
+  'RVTC:Garage House': {
+    // rvtc.com: 1:2, 93-94°C, 30-33s | KN S.10: braucht mehr Temperatur als Italo Pop
+    single:      { grind: 13,   dose: 11, yield: 24, time: 28 },
+    double:      { grind: 14,   dose: 18, yield: 36, time: 30 },
+    'cafe-creme': { grind: 24,   dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:Jungle Boogie': {
+    // rvtc.com: 1:2.5, 93-94°C, 30-33s | KN S.3: 1:2.5, 34-36s, Sweet Spot "Mandel/Marzipan"
+    single:      { grind: 14,   dose: 11, yield: 27, time: 30 },
+    double:      { grind: 15,   dose: 18, yield: 45, time: 32 },
+    'cafe-creme': { grind: 25,   dose: 16, yield: 125, time: 28 },
+  },
+  'RVTC:Bulle Blend': {
+    // Keine spezifischen Params, abgeleitet von Italo Pop / Desert Rose (dark, washed)
+    single:      { grind: 17,   dose: 10, yield: 21, time: 24 },
+    double:      { grind: 18,   dose: 18, yield: 38, time: 26 },
+    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+  },
+  'RVTC:The Commonage': {
+    // Keine spezifischen Params, dark washed Malawi
+    single:      { grind: 17,   dose: 10, yield: 21, time: 24 },
+    double:      { grind: 18,   dose: 18, yield: 38, time: 26 },
+    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+  },
+  'RVTC:Antonio Alvarado': {
+    // Light natural Costa Rica — anspruchsvollste Bohne auf HX
+    single:      { grind: 12,   dose: 11, yield: 30, time: 30 },
+    double:      { grind: 13,   dose: 18, yield: 50, time: 33 },
+    'cafe-creme': { grind: 24,   dose: 16, yield: 130, time: 29 },
+  },
+  'RVTC:Gara Kogne': {
+    // Light-medium washed Ethiopian, floral/teeig
+    single:      { grind: 13,   dose: 11, yield: 28, time: 29 },
+    double:      { grind: 14,   dose: 18, yield: 45, time: 32 },
+    'cafe-creme': { grind: 25,   dose: 16, yield: 125, time: 28 },
+  },
+  'RVTC:Mundayo AASH': {
+    // rvtc.com: gut als Flat White | Medium natural Ethiopian
+    single:      { grind: 14,   dose: 11, yield: 25, time: 28 },
+    double:      { grind: 15,   dose: 18, yield: 40, time: 30 },
+    'cafe-creme': { grind: 25,   dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:El Congo': {
+    // Medium honey Costa Rica, Tarrazu
+    single:      { grind: 13,   dose: 11, yield: 25, time: 28 },
+    double:      { grind: 14,   dose: 18, yield: 40, time: 30 },
+    'cafe-creme': { grind: 24.5, dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:Vanessa Moreno': {
+    // Medium natural Brasilien — schokoladig, verzeihend
+    single:      { grind: 14,   dose: 11, yield: 24, time: 26 },
+    double:      { grind: 15,   dose: 18, yield: 40, time: 28 },
+    'cafe-creme': { grind: 25,   dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:Italo Pop Decaf': {
+    // KN Decaf-Thread: Ristretto 1:1–1:1.5 bester Geschmack, Decaf extrahiert schneller
+    single:      { grind: 18,   dose: 10, yield: 18, time: 23 },
+    double:      { grind: 19,   dose: 17, yield: 30, time: 24 },
+    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 25 },
+  },
+  'RVTC:Pink Bourbon Decaf': {
+    // rvtc.com: Lebkuchen, Jaffa Cake — intensiv genug für Flat White
+    single:      { grind: 15,   dose: 11, yield: 25, time: 28 },
+    double:      { grind: 16,   dose: 18, yield: 40, time: 30 },
+    'cafe-creme': { grind: 26,   dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:Dimtu Tora Guji Decaf': {
+    // Medium natural Ethiopian Decaf
+    single:      { grind: 15,   dose: 11, yield: 25, time: 28 },
+    double:      { grind: 16,   dose: 18, yield: 40, time: 30 },
+    'cafe-creme': { grind: 26,   dose: 16, yield: 120, time: 27 },
+  },
+  'RVTC:Carbonic Natural Decaf': {
+    // rvtc.com: nussig-süß, milde Säure | Dark natural Decaf
+    single:      { grind: 19,   dose: 10, yield: 20, time: 24 },
+    double:      { grind: 20,   dose: 17, yield: 36, time: 25 },
+    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 26 },
+  },
+};
+
 // ── Smart Recipe Defaults ──────────────────────
 // Berechnet Startrezepte basierend auf Röstgrad & Processing
+// Falls RECIPE_OVERRIDES vorhanden → diese bevorzugen
 // Optimiert für: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
 // Single Basket: 11g bodenlos | Double Basket: 18g
 
@@ -414,12 +514,15 @@ const PROCESSING_GRIND_OFFSET = {
 };
 
 export function getRecipeDefaults(bean) {
+  const key = `${bean.roastery}:${bean.name}`;
+  if (RECIPE_OVERRIDES[key]) return RECIPE_OVERRIDES[key];
+
   const base = ROAST_RECIPE_MAP[bean.roast] || ROAST_RECIPE_MAP['medium'];
   const offset = PROCESSING_GRIND_OFFSET[bean.processing] || 0;
 
   return {
     single: {
-      grind: Math.round((base[0] + offset) * 2) / 2, // Niche 0.5er Schritte
+      grind: Math.round((base[0] + offset) * 2) / 2,
       dose: base[3],
       yield: base[6],
       time: base[9],

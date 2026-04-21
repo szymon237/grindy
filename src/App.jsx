@@ -24,7 +24,7 @@ import 'leaflet/dist/leaflet.css';
 // ──────────────────────────────────────────────
 
 const STORAGE_KEY = 'grindy-data';
-const RECIPE_VERSION = 2; // Bump to force recipe recalculation
+const RECIPE_VERSION = 3; // Bump to force recipe recalculation
 
 function migrateRecipes(persisted) {
   if (!persisted || persisted.recipeVersion >= RECIPE_VERSION) return persisted;

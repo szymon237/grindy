@@ -394,21 +394,22 @@ export const COFFEE_DATABASE = [
 // ── Recipe Overrides ──────────────────────────
 // Community- & Rösterei-basierte Rezepte (Kaffee-Netz, RVTC Website, GrindDial)
 // Überschreiben die algorithmischen Defaults wenn vorhanden
-// Optimiert für: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
+// Kalibriert auf: Rocket Appartamento (E61 HX) + Niche Zero (0–50)
+// Referenzpunkt: Desert Rose Double=11 bestätigt (21.04.2026), Community-Werte ~9 Stufen zu grob für dark roast
 const RECIPE_OVERRIDES = {
   // RVTC — Quellen: rvtc.com Produktseiten, Kaffee-Netz RVTC-Thread (S.1-10), User-Reports
   // RVTC-Café-Standard: 1:2.5, 94.5°C, 21g Baskets (La Marzocco + Mythos 1)
   'RVTC:Desert Rose': {
-    // rvtc.com: 1:2, 91-92°C, 21-25s | KN S.3: 1:2.5, 32-35s | KN S.9: 18.4g→40.5g, 25.5s
-    single:      { grind: 18,   dose: 10, yield: 22, time: 24 },
-    double:      { grind: 19,   dose: 18, yield: 40, time: 25 },
-    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 26 },
+    // rvtc.com: 1:2, 91-92°C, 21-25s | Kalibriert: Double=11 bestätigt (21.04.2026)
+    single:      { grind: 10,   dose: 10, yield: 22, time: 24 },
+    double:      { grind: 11,   dose: 18, yield: 40, time: 25 },
+    'cafe-creme': { grind: 22,   dose: 16, yield: 120, time: 26 },
   },
   'RVTC:Italo Pop': {
-    // rvtc.com: 1:2, 91-92°C, 21-25s | KN S.3: 1:2.5, 25-30s | KN S.9: 18.3g→39.5g, 27s
-    single:      { grind: 17,   dose: 10, yield: 22, time: 25 },
-    double:      { grind: 18,   dose: 18, yield: 39, time: 27 },
-    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+    // rvtc.com: 1:2, 91-92°C, 21-25s | KN S.9: 18.3g→39.5g, 27s
+    single:      { grind: 9,   dose: 10, yield: 22, time: 25 },
+    double:      { grind: 10,   dose: 18, yield: 39, time: 27 },
+    'cafe-creme': { grind: 21,   dose: 16, yield: 120, time: 26 },
   },
   'RVTC:Garage House': {
     // rvtc.com: 1:2, 93-94°C, 30-33s | KN S.10: braucht mehr Temperatur als Italo Pop
@@ -423,16 +424,16 @@ const RECIPE_OVERRIDES = {
     'cafe-creme': { grind: 25,   dose: 16, yield: 125, time: 28 },
   },
   'RVTC:Bulle Blend': {
-    // Keine spezifischen Params, abgeleitet von Italo Pop / Desert Rose (dark, washed)
-    single:      { grind: 17,   dose: 10, yield: 21, time: 24 },
-    double:      { grind: 18,   dose: 18, yield: 38, time: 26 },
-    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+    // Abgeleitet von Italo Pop (dark, washed)
+    single:      { grind: 9,   dose: 10, yield: 21, time: 24 },
+    double:      { grind: 10,   dose: 18, yield: 38, time: 26 },
+    'cafe-creme': { grind: 21,   dose: 16, yield: 120, time: 26 },
   },
   'RVTC:The Commonage': {
-    // Keine spezifischen Params, dark washed Malawi
-    single:      { grind: 17,   dose: 10, yield: 21, time: 24 },
-    double:      { grind: 18,   dose: 18, yield: 38, time: 26 },
-    'cafe-creme': { grind: 27,   dose: 16, yield: 120, time: 26 },
+    // Dark washed Malawi
+    single:      { grind: 9,   dose: 10, yield: 21, time: 24 },
+    double:      { grind: 10,   dose: 18, yield: 38, time: 26 },
+    'cafe-creme': { grind: 21,   dose: 16, yield: 120, time: 26 },
   },
   'RVTC:Antonio Alvarado': {
     // Light natural Costa Rica — anspruchsvollste Bohne auf HX
@@ -465,10 +466,10 @@ const RECIPE_OVERRIDES = {
     'cafe-creme': { grind: 25,   dose: 16, yield: 120, time: 27 },
   },
   'RVTC:Italo Pop Decaf': {
-    // KN Decaf-Thread: Ristretto 1:1–1:1.5 bester Geschmack, Decaf extrahiert schneller
-    single:      { grind: 18,   dose: 10, yield: 18, time: 23 },
-    double:      { grind: 19,   dose: 17, yield: 30, time: 24 },
-    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 25 },
+    // KN Decaf-Thread: Ristretto 1:1–1:1.5 bester Geschmack, Decaf extrahiert schneller (+1 gröber)
+    single:      { grind: 10,   dose: 10, yield: 18, time: 23 },
+    double:      { grind: 11,   dose: 17, yield: 30, time: 24 },
+    'cafe-creme': { grind: 22,   dose: 16, yield: 120, time: 25 },
   },
   'RVTC:Pink Bourbon Decaf': {
     // rvtc.com: Lebkuchen, Jaffa Cake — intensiv genug für Flat White
@@ -483,10 +484,10 @@ const RECIPE_OVERRIDES = {
     'cafe-creme': { grind: 26,   dose: 16, yield: 120, time: 27 },
   },
   'RVTC:Carbonic Natural Decaf': {
-    // rvtc.com: nussig-süß, milde Säure | Dark natural Decaf
-    single:      { grind: 19,   dose: 10, yield: 20, time: 24 },
-    double:      { grind: 20,   dose: 17, yield: 36, time: 25 },
-    'cafe-creme': { grind: 28,   dose: 16, yield: 120, time: 26 },
+    // rvtc.com: nussig-süß, milde Säure | Dark natural Decaf (+1 gröber für Decaf)
+    single:      { grind: 11,   dose: 10, yield: 20, time: 24 },
+    double:      { grind: 12,   dose: 17, yield: 36, time: 25 },
+    'cafe-creme': { grind: 23,   dose: 16, yield: 120, time: 26 },
   },
 };
 
@@ -502,7 +503,7 @@ const ROAST_RECIPE_MAP = {
   'light-medium': [14, 15, 25, 11, 18, 16, 27, 44, 125, 25, 25, 27],
   'medium':       [12, 13, 23, 11, 18, 16, 24, 40, 120, 24, 24, 26],
   'medium-dark':  [10, 11, 22, 11, 18, 16, 22, 36, 120, 23, 23, 25],
-  'dark':         [ 8,  9, 20, 10, 17, 16, 20, 34, 120, 22, 22, 25],
+  'dark':         [ 9, 10, 21, 10, 17, 16, 20, 34, 120, 22, 22, 25],
 };
 
 // Natural/Anaerobic: etwas gröber (+1), mehr Solubles
